@@ -12,7 +12,7 @@ function App() {
             <img src={cuyLogo} className="logo cuy" alt="Cuy logo" />
             </a>
         </div>
-        <h1>🏆 REACTVITE PACK 🏆</h1>
+        <h1>NewIskandar</h1>
         <div className="card">
             <button onClick={() => setCount((count) => count + 1)}>
             realtime click {count}
