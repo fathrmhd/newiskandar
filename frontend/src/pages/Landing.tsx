@@ -1,9 +1,17 @@
 import type { FC } from 'react'
-import { Canting, DyeDrop, StageMark, Tag } from '@/components/batik'
+import {
+  ArrowRight,
+  Canting,
+  DyeDrop,
+  ShieldIcon,
+  StageMark,
+  Tag,
+  UserIcon,
+} from '@/components/batik'
 import bgPattern from '@/assets/background.svg'
 import { MOTIFS } from '@/lib/ai'
 
-type Page = 'landing' | 'customer' | 'seller'
+type Page = 'landing' | 'customer' | 'pembatik' | 'owner' | 'auth'
 
 interface LandingProps {
   go: (page: Page) => void
@@ -21,22 +29,22 @@ const PILLARS = [
     body: 'Setiap pesanan disimulasikan ke kapasitas asli tiap pembatik dan stok bahan, sehingga sanggar hanya menyanggupi yang benar-benar mampu dikerjakan.',
   },
   {
-    tag: 'Smart Logistics',
-    title: 'Satu putaran rute',
-    body: 'Penjemputan bahan, antar ke sanggar antar-desa, dan konsolidasi hasil dirangkai jadi satu rute paling hemat yang selaras dengan tanggal janji.',
+    tag: 'Monitoring Optik AI',
+    title: 'Standar mutu & kepatuhan',
+    body: 'Pengawasan sensor optik stasiun kerja dan pencatatan kepatuhan otomatis menjaga keteraturan sanggar dan akurasi evaluasi harian.',
   },
 ]
 
-const Landing: FC<LandingProps> = ({ go }) => {
+export const Landing: FC<LandingProps> = ({ go }) => {
   return (
     <main>
       {/* Hero Section */}
       <section className="relative min-h-[calc(100vh-40px)] overflow-hidden bg-navy px-5 py-16 text-soft sm:px-8 sm:py-24">
         {/* Background Motif Pattern Overlay */}
         <div
-          className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-40"
+          className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-35"
           style={{
-            backgroundImage: `linear-gradient(to bottom, rgba(10, 25, 47, 0.4), rgba(10, 25, 47, 0.85)), url(${bgPattern})`,
+            backgroundImage: `linear-gradient(to bottom, rgba(10, 25, 47, 0.45), rgba(10, 25, 47, 0.9)), url(${bgPattern})`,
           }}
         />
 
@@ -44,7 +52,7 @@ const Landing: FC<LandingProps> = ({ go }) => {
           {/* Eyebrow */}
           <div className="flex items-center gap-2 text-sky/80">
             <DyeDrop className="h-4 w-3" color="#b3cfe5" />
-            <span className="text-sm font-medium">Batik Tulis Aceh · sanggar pengrajin</span>
+            <span className="text-sm font-medium">Batik Tulis Aceh · Sanggar Pengrajin</span>
           </div>
 
           {/* Hero Title */}
@@ -57,34 +65,59 @@ const Landing: FC<LandingProps> = ({ go }) => {
 
           {/* Subtitle */}
           <p className="mt-8 max-w-2xl text-base leading-relaxed text-sky/75 sm:text-lg">
-            New Iskandar menautkan tangan pembatik dengan pasar dunia lewat satu mesin AI, harga, kapasitas, dan rute dihitung sejujur guratan canting, tanpa chatbot, langsung terbaca.
+            New Iskandar menautkan tangan pembatik dengan pasar dunia lewat satu mesin AI. Harga, kapasitas, rute, dan pengawasan mutu dihitung sejujur guratan canting.
           </p>
 
-          {/* Action Cards */}
-          <div className="mt-12 grid max-w-2xl gap-5 sm:grid-cols-2">
+          {/* Action Cards untuk Tiga Peran */}
+          <div className="mt-12 grid max-w-3xl gap-4 sm:grid-cols-3">
+            {/* Kartu Pembeli */}
             <button
               onClick={() => go('customer')}
-              className="group flex items-center justify-between rounded-2xl bg-soft p-6 text-left shadow-lg transition-all duration-200 hover:bg-white hover:shadow-xl"
+              className="group flex flex-col justify-between rounded-3xl bg-soft p-6 text-left shadow-lg transition-all duration-200 hover:bg-white hover:shadow-xl"
             >
               <div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky/30 text-navy mb-4">
+                  <UserIcon className="h-5 w-5" />
+                </div>
                 <p className="font-display text-xl text-navy">Saya ingin memesan</p>
-                <p className="mt-1 text-sm text-deep/70">Masuk sebagai Pembeli</p>
+                <p className="mt-1 text-xs text-deep/70">Masuk sebagai Pembeli</p>
               </div>
-              <span className="text-2xl text-navy transition-transform duration-200 group-hover:translate-x-1.5">
-                →
+              <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-ocean group-hover:text-navy">
+                Laman Pembeli <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </button>
 
+            {/* Kartu Pembatik */}
             <button
-              onClick={() => go('seller')}
-              className="group flex items-center justify-between rounded-2xl border border-sky/20 bg-deep/40 p-6 text-left backdrop-blur transition-all duration-200 hover:border-sky/40 hover:bg-deep/60"
+              onClick={() => go('pembatik')}
+              className="group flex flex-col justify-between rounded-3xl border border-sky/20 bg-deep/40 p-6 text-left backdrop-blur transition-all duration-200 hover:border-sky/40 hover:bg-deep/60"
             >
               <div>
-                <p className="font-display text-xl text-soft">Saya seorang pembatik</p>
-                <p className="mt-1 text-sm text-sky/60">Masuk sebagai Sanggar / Seller</p>
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-sky mb-4">
+                  <DyeDrop className="h-5 w-4" color="#b3cfe5" />
+                </div>
+                <p className="font-display text-xl text-soft">Staf pembatik</p>
+                <p className="mt-1 text-xs text-sky/70">Dashboard Meja Kerja</p>
               </div>
-              <span className="text-2xl text-sky/80 transition-transform duration-200 group-hover:translate-x-1.5">
-                →
+              <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-sky group-hover:text-soft">
+                Buka Dashboard <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              </span>
+            </button>
+
+            {/* Kartu Pemilik Sanggar */}
+            <button
+              onClick={() => go('owner')}
+              className="group flex flex-col justify-between rounded-3xl border border-sky/20 bg-deep/40 p-6 text-left backdrop-blur transition-all duration-200 hover:border-sky/40 hover:bg-deep/60"
+            >
+              <div>
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-sky mb-4">
+                  <ShieldIcon className="h-5 w-5" />
+                </div>
+                <p className="font-display text-xl text-soft">Pemilik sanggar</p>
+                <p className="mt-1 text-xs text-sky/70">Pusat Kendali & Kamera</p>
+              </div>
+              <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-sky group-hover:text-soft">
+                Buka Dashboard <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </button>
           </div>
@@ -96,7 +129,7 @@ const Landing: FC<LandingProps> = ({ go }) => {
         <StageMark
           numeral="tiga"
           title="Tiga pilar, satu jahitan"
-          sub="Detail penuh terbuka begitu Anda memilih peran — pembeli atau pembatik."
+          sub="Detail penuh terbuka begitu Anda memilih peran — pembeli, staf pembatik, atau pemilik sanggar."
         />
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {PILLARS.map((p, i) => (
@@ -127,7 +160,8 @@ const Landing: FC<LandingProps> = ({ go }) => {
               onClick={() => go('customer')}
               className="group flex items-center gap-2 text-sm font-semibold text-ocean hover:text-deep"
             >
-              Lihat katalog <Arrow className="h-4 w-4 text-ocean" />
+              <span>Lihat katalog</span>
+              <ArrowRight className="h-4 w-4 text-ocean transition-transform group-hover:translate-x-1" />
             </button>
           </div>
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
@@ -144,25 +178,6 @@ const Landing: FC<LandingProps> = ({ go }) => {
         </div>
       </section>
     </main>
-  )
-}
-
-function Arrow({ className = '' }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={`h-5 w-5 transition-transform group-hover:translate-x-1 ${className}`}
-      fill="none"
-      aria-hidden
-    >
-      <path
-        d="M4 12h15m0 0-6-6m6 6-6 6"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
   )
 }
 
