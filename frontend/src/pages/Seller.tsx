@@ -25,20 +25,13 @@ const Seller: FC = () => {
 
   return (
     <main className="mx-auto max-w-[1180px] px-5 pb-24 pt-10 sm:px-8">
-      {/* Header & Stage Mark */}
-      <StageMark
-        numeral="B"
-        title="Dasbor Pembatik & AI Estimator"
-        sub="Kelola produksi canting, stok kain mori, dan jadwal celup warna."
-      />
-
+      {/* Header*/}
       <div className="mt-4 mb-3 flex items-center gap-2">
         <DyeDrop className="h-4 w-3" />
         <span className="text-sm font-semibold text-ocean">Meja kerja sanggar</span>
       </div>
-      <h1 className="max-w-2xl font-display text-4xl text-navy">Catat kekuatan sanggar hari ini</h1>
       <p className="mt-2 max-w-xl text-[15px] text-deep/70">
-        Isi apa adanya — jumlah tangan yang siap membatik dan bahan yang ada di gudang.
+        jumlah tangan yang siap membatik dan bahan yang ada di gudang.
         Dari sini mesin menghitung sanggup berapa banyak, seberapa cepat, dan berapa modalnya.
       </p>
       <Canting className="mt-4 h-2 w-52 text-sky" />
