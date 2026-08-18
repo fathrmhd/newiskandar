@@ -1,7 +1,8 @@
 import type { FC, ReactNode } from 'react'
 import { useMemo, useState } from 'react'
-import { Canting, DyeDrop, StageMark, StockBadge, Tag } from '@/components/batik'
+import { Canting, CheckIcon, DyeDrop, StageMark, StockBadge, Tag } from '@/components/batik'
 import { BATIK_STAGES, MOTIFS, TIERS, computeAI, fmtDate, rupiah, shortDate } from '@/lib/ai'
+import { BatikDigitalTwinAnimation } from '@/components/BatikDigitalTwinAnimation'
 
 export default function Customer() {
   const [step, setStep] = useState<1 | 2>(1)
@@ -76,7 +77,7 @@ function Screen1({
                       active ? 'border-ocean bg-ocean text-soft' : 'border-white bg-white/70'
                     }`}
                   >
-                    {active && <Check />}
+                    {active && <CheckIcon className="h-3.5 w-3.5" />}
                   </span>
                 </div>
                 <div className="bg-white px-3 py-2">
@@ -205,13 +206,19 @@ function Screen2({
   const active = BATIK_STAGES[activeIndex]
 
   return (
-    <div>
-      <button onClick={onBack} className="mb-6 text-sm font-semibold text-ocean hover:text-deep">← Ubah pesanan</button>
+    <div className="space-y-8">
+      <button onClick={onBack} className="text-sm font-semibold text-ocean hover:text-deep">
+        ← Ubah pesanan
+      </button>
+
       <StageMark
         numeral="dua"
         title="Pesanan Anda sedang dikerjakan"
         sub={`${qty} lembar Batik ${chosen.name} · kode BTK-${chosen.sku.slice(-3)}-${qty}`}
       />
+
+      {/* Komponen Animasi Digital Twin Proses Pembuatan Batik */}
+      <BatikDigitalTwinAnimation initialStage={2} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
         <div className="rounded-3xl border border-sky/60 bg-white p-6 sm:p-8">
@@ -311,13 +318,5 @@ function StepDot({ n, label, active, done, onClick }: { n: string; label: string
       <span className={`hand-numeral text-2xl ${active ? 'text-ocean' : done ? 'text-[color:var(--color-ok)]' : 'text-deep/35'}`}>{n}</span>
       <span className={`${active ? 'font-semibold text-navy' : 'text-deep/55'}`}>{label}</span>
     </button>
-  )
-}
-
-function Check() {
-  return (
-    <svg viewBox="0 0 14 14" className="h-3.5 w-3.5" fill="none" aria-hidden>
-      <path d="M3 7l2.5 2.5L11 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   )
 }
