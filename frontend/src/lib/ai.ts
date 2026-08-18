@@ -67,14 +67,70 @@ export const addDays = (d: Date, days: number) => {
 }
 
 /* --- Digital Twin sanggar: dikelola sebagai data mentah oleh Seller --- */
-export type Worker = { id: string; name: string; skill: string; rate: number }
+export type Worker = {
+  id: string
+  name: string
+  skill: string
+  rate: number
+  stationId?: string
+  status?: 'active' | 'idle' | 'break' | 'warning'
+  currentLocation?: string
+  activeHoursToday?: number
+  breakMinutesToday?: number
+  complianceScore?: number
+}
+
 export type Material = { id: string; name: string; need: number; unit: string; minDiscount: number }
 
 export const DEFAULT_WORKERS: Worker[] = [
-  { id: 'w1', name: 'Bu Nuraini', skill: 'Batik tulis halus', rate: 0.9 },
-  { id: 'w2', name: 'Pak Yusuf', skill: 'Nge-cap tembaga', rate: 0.7 },
-  { id: 'w3', name: 'Bu Salmah', skill: 'Pewarnaan indigo', rate: 0.8 },
-  { id: 'w4', name: 'Pak Ridwan', skill: 'Pelorodan & finishing', rate: 0.75 },
+  {
+    id: 'w1',
+    name: 'Bu Nuraini',
+    skill: 'Batik tulis halus (Pinto Aceh)',
+    rate: 0.9,
+    stationId: 'st-1',
+    status: 'active',
+    currentLocation: 'Meja Canting Utama 01',
+    activeHoursToday: 6.8,
+    breakMinutesToday: 45,
+    complianceScore: 99.2,
+  },
+  {
+    id: 'w2',
+    name: 'Pak Yusuf',
+    skill: 'Nge-cap tembaga & canting',
+    rate: 0.7,
+    stationId: 'st-2',
+    status: 'active',
+    currentLocation: 'Stasiun Cap Tembaga 02',
+    activeHoursToday: 6.3,
+    breakMinutesToday: 45,
+    complianceScore: 96.5,
+  },
+  {
+    id: 'w3',
+    name: 'Bu Salmah',
+    skill: 'Pewarnaan indigo alami',
+    rate: 0.8,
+    stationId: 'st-3',
+    status: 'active',
+    currentLocation: 'Bak Pencelupan Indigo 03',
+    activeHoursToday: 6.5,
+    breakMinutesToday: 50,
+    complianceScore: 98.0,
+  },
+  {
+    id: 'w4',
+    name: 'Pak Ridwan',
+    skill: 'Pelorodan & QC mutu',
+    rate: 0.75,
+    stationId: 'st-4',
+    status: 'idle',
+    currentLocation: 'Area Pelorodan & QC 04',
+    activeHoursToday: 5.6,
+    breakMinutesToday: 35,
+    complianceScore: 89.5,
+  },
 ]
 
 export const DEFAULT_MATERIALS: Material[] = [
@@ -83,7 +139,231 @@ export const DEFAULT_MATERIALS: Material[] = [
   { id: 'm3', name: 'Pewarna indigo alami', need: 40, unit: 'takar', minDiscount: 50 },
 ]
 
-export function computeAI(qty: number, dailyCapacity = DEFAULT_WORKERS.reduce((s, a) => s + a.rate, 0)) {
+/* --- Model 1 Kamera Sentral Sanggar (Single Camera AI Surveillance) --- */
+export interface Workstation {
+  id: string
+  name: string
+  code: string
+  stage: string
+  assignedWorkerId: string
+  assignedWorkerName: string
+  cameraName: string
+  ipCamera: string
+  fps: number
+  resolution: string
+  currentActivity: string
+  complianceRate: number
+  idleSeconds: number
+  status: 'active' | 'idle' | 'warning' | 'break'
+}
+
+export const CENTRAL_CAMERA: Workstation = {
+  id: 'cam-central',
+  name: 'Kamera Sentral Sanggar — AI Optical Surveillance',
+  code: 'CAM-SANGGAR-01',
+  stage: 'Monitoring Terpadu Seluruh Pengrajin',
+  assignedWorkerId: 'all',
+  assignedWorkerName: '4 Pengrajin Terpantau',
+  cameraName: 'Sensor Optik Sentral Wide-Angle AI',
+  ipCamera: 'rtsp://cam-central.sanggar.local:554/live',
+  fps: 30,
+  resolution: '1920x1080 (HD AI Stream)',
+  currentActivity: 'Pengawasan Aktif Area Canting, Cap, Celup, & Pelorodan',
+  complianceRate: 96.4,
+  idleSeconds: 0,
+  status: 'active',
+}
+
+// Data kompatibilitas untuk workstation individual bila diperlukan
+export const WORKSTATIONS: Workstation[] = [
+  CENTRAL_CAMERA,
+  {
+    id: 'st-1',
+    name: 'Meja Canting Utama 01',
+    code: 'POS-01',
+    stage: 'Nyanting Pola Halus',
+    assignedWorkerId: 'w1',
+    assignedWorkerName: 'Bu Nuraini',
+    cameraName: 'Kamera Sentral (Zona Canting)',
+    ipCamera: 'rtsp://cam-central.sanggar.local:554/live?zone=canting',
+    fps: 30,
+    resolution: '1920x1080 (HD)',
+    currentActivity: 'Mencanting Garis Isen-isen (Pinto Aceh)',
+    complianceRate: 98.2,
+    idleSeconds: 0,
+    status: 'active',
+  },
+  {
+    id: 'st-2',
+    name: 'Stasiun Cap Tembaga 02',
+    code: 'POS-02',
+    stage: 'Nge-cap Motif Dasar',
+    assignedWorkerId: 'w2',
+    assignedWorkerName: 'Pak Yusuf',
+    cameraName: 'Kamera Sentral (Zona Cap)',
+    ipCamera: 'rtsp://cam-central.sanggar.local:554/live?zone=cap',
+    fps: 30,
+    resolution: '1920x1080 (HD)',
+    currentActivity: 'Pengecapan Canting Cap Tembaga',
+    complianceRate: 94.5,
+    idleSeconds: 12,
+    status: 'active',
+  },
+  {
+    id: 'st-3',
+    name: 'Bak Pencelupan Indigo 03',
+    code: 'POS-03',
+    stage: 'Pewarnaan Celup Alami',
+    assignedWorkerId: 'w3',
+    assignedWorkerName: 'Bu Salmah',
+    cameraName: 'Kamera Sentral (Zona Celup)',
+    ipCamera: 'rtsp://cam-central.sanggar.local:554/live?zone=celup',
+    fps: 28,
+    resolution: '1920x1080 (HD)',
+    currentActivity: 'Pencelupan Indigofera Celup Ke-2',
+    complianceRate: 96.0,
+    idleSeconds: 0,
+    status: 'active',
+  },
+  {
+    id: 'st-4',
+    name: 'Area Pelorodan & QC 04',
+    code: 'POS-04',
+    stage: 'Pelorodan & Mutu',
+    assignedWorkerId: 'w4',
+    assignedWorkerName: 'Pak Ridwan',
+    cameraName: 'Kamera Sentral (Zona Pelorodan)',
+    ipCamera: 'rtsp://cam-central.sanggar.local:554/live?zone=pelorodan',
+    fps: 30,
+    resolution: '1920x1080 (HD)',
+    currentActivity: 'Menunggu Pengeringan / Meja Kosong Sementara',
+    complianceRate: 88.5,
+    idleSeconds: 190,
+    status: 'warning',
+  },
+]
+
+/* --- Laporan Kronologis Aktivitas & Pergerakan Pengrajin (Chronicle Feed) --- */
+export interface AuditLog {
+  id: string
+  timestamp: string
+  workerName: string
+  stationId: string
+  stationName: string
+  type:
+    | 'inactivity_warning'
+    | 'movement'
+    | 'break_start'
+    | 'break_end'
+    | 'task_milestone'
+    | 'resumed'
+    | 'system_check'
+  location: string
+  destinationLocation?: string
+  durationMinutes?: number
+  severity: 'low' | 'medium' | 'high'
+  status: 'resolved' | 'active_alert' | 'approved' | 'logged'
+  note: string
+}
+
+export const INITIAL_AUDIT_LOGS: AuditLog[] = [
+  {
+    id: 'log-01',
+    timestamp: '15:10 WIB',
+    workerName: 'Bu Nuraini',
+    stationId: 'st-1',
+    stationName: 'Meja Canting Utama 01',
+    type: 'task_milestone',
+    location: 'Meja Canting Utama',
+    severity: 'low',
+    status: 'logged',
+    note: 'Pengrajin Bu Nuraini menyelesaikan kain motif Pinto Aceh tahap 1 (isian isen-isen lengkap).',
+  },
+  {
+    id: 'log-02',
+    timestamp: '14:22 WIB',
+    workerName: 'Pak Ridwan',
+    stationId: 'st-4',
+    stationName: 'Area Pelorodan & QC 04',
+    type: 'inactivity_warning',
+    location: 'Area Pelorodan',
+    durationMinutes: 3.2,
+    severity: 'high',
+    status: 'active_alert',
+    note: 'Pengrajin Pak Ridwan meninggalkan area pelorodan melebihi batas waktu toleransi 3 menit tanpa izin terencana.',
+  },
+  {
+    id: 'log-03',
+    timestamp: '13:40 WIB',
+    workerName: 'Bu Salmah',
+    stationId: 'st-3',
+    stationName: 'Bak Pencelupan Indigo 03',
+    type: 'task_milestone',
+    location: 'Bak Pencelupan Indigo',
+    severity: 'low',
+    status: 'logged',
+    note: 'Pengrajin Bu Salmah melakukan aerasi kain dan pencelupan indigofera tahap ke-2.',
+  },
+  {
+    id: 'log-04',
+    timestamp: '12:00 WIB',
+    workerName: 'Pak Yusuf',
+    stationId: 'st-2',
+    stationName: 'Stasiun Cap Tembaga 02',
+    type: 'break_start',
+    location: 'Stasiun Cap Tembaga',
+    destinationLocation: 'Ruang Istirahat Sanggar',
+    durationMinutes: 45,
+    severity: 'low',
+    status: 'approved',
+    note: 'Pengrajin Pak Yusuf istirahat siang terjadwal (kembali tepat waktu pada 12:45 WIB).',
+  },
+  {
+    id: 'log-05',
+    timestamp: '10:15 WIB',
+    workerName: 'Bu Nuraini',
+    stationId: 'st-1',
+    stationName: 'Meja Canting Utama 01',
+    type: 'movement',
+    location: 'Meja Canting Utama',
+    destinationLocation: 'Ruang Pemanas Malam Lilin',
+    durationMinutes: 13,
+    severity: 'low',
+    status: 'approved',
+    note: 'Pengrajin Bu Nuraini izin ke ruang pemanas lilin untuk mengambil lelehan malam klowong baru.',
+  },
+  {
+    id: 'log-06',
+    timestamp: '09:20 WIB',
+    workerName: 'Pak Yusuf',
+    stationId: 'st-2',
+    stationName: 'Stasiun Cap Tembaga 02',
+    type: 'movement',
+    location: 'Stasiun Cap Tembaga',
+    destinationLocation: 'Gudang Kain Mori',
+    durationMinutes: 8,
+    severity: 'low',
+    status: 'resolved',
+    note: 'Pengrajin Pak Yusuf mengambil 3 lembar kain mori primissima siap cap di rak penyimpanan.',
+  },
+  {
+    id: 'log-07',
+    timestamp: '08:05 WIB',
+    workerName: 'Bu Nuraini',
+    stationId: 'st-1',
+    stationName: 'Meja Canting Utama 01',
+    type: 'system_check',
+    location: 'Meja Canting Utama',
+    severity: 'low',
+    status: 'resolved',
+    note: 'Pengrajin Bu Nuraini tiba di sanggar dan memulai mencanting pola Pinto Aceh.',
+  },
+]
+
+export function computeAI(
+  qty: number,
+  dailyCapacity = DEFAULT_WORKERS.reduce((s, a) => s + (a.rate || 0), 0)
+) {
   const tier = TIERS.find((t) => qty >= t.min && qty <= t.max) ?? TIERS[TIERS.length - 1]
   const readyUsed = Math.min(qty, READY_STOCK)
   const poQty = Math.max(0, qty - READY_STOCK)
@@ -118,9 +398,26 @@ export function computeAI(qty: number, dailyCapacity = DEFAULT_WORKERS.reduce((s
     stockRemaining <= 0 ? 'danger' : stockRemaining <= reorderPoint ? 'warn' : 'ok'
 
   return {
-    tier, readyUsed, poQty, bom, materialTotal, dailyCapacity: cap, productionDays,
-    materialLead, finishing, totalDays, slaDate, materialPerUnit, overhead, labor,
-    hpp, margin, marginPct, stockRemaining, reorderPoint, stockRisk,
+    tier,
+    readyUsed,
+    poQty,
+    bom,
+    materialTotal,
+    dailyCapacity: cap,
+    productionDays,
+    materialLead,
+    finishing,
+    totalDays,
+    slaDate,
+    materialPerUnit,
+    overhead,
+    labor,
+    hpp,
+    margin,
+    marginPct,
+    stockRemaining,
+    reorderPoint,
+    stockRisk,
     subtotal: tier.price * qty,
   }
 }
