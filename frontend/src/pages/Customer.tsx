@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import { useMemo, useState } from 'react'
-import { Canting, CheckIcon, DyeDrop, StageMark, StockBadge, Tag } from '@/components/batik'
+import { Canting, CheckIcon, DyeDrop, StageMark, Tag } from '@/components/batik'
 import { BATIK_STAGES, MOTIFS, TIERS, computeAI, fmtDate, rupiah, shortDate } from '@/lib/ai'
 import { BatikDigitalTwinAnimation } from '@/components/BatikDigitalTwinAnimation'
 
@@ -13,11 +13,8 @@ export default function Customer() {
 
   return (
     <main className="mx-auto max-w-[1180px] px-5 pb-24 pt-10 sm:px-8">
-      {/* Alur 2 langkah — penanda personal, bukan stepper generik */}
       <div className="mb-8 flex items-center gap-4 text-[15px]">
-        <StepDot n="satu" label="Pilih & atur" active={step === 1} done={step === 2} onClick={() => setStep(1)} />
         <Canting className="h-2 w-16 text-sky" />
-        <StepDot n="dua" label="Pantau produksi" active={step === 2} done={false} onClick={() => step === 2 && setStep(2)} />
       </div>
 
       {step === 1 ? (
@@ -55,10 +52,14 @@ function Screen1({
 }) {
   const clamp = (n: number) => Math.max(1, Math.min(2000, Math.round(n || 1)))
   
+  // Kalkulasi Rentang SLA (Range) dengan buffer toleransi waktu idle/istirahat
+  const minDays = Math.max(1, Math.ceil(ai.totalDays))
+  const maxDays = minDays + 3 // Toleransi 3 hari untuk waktu tak terduga & antrian
+
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.1fr_1fr]">
       <div>
-        <StageMark numeral="satu" title="Pilih model batik" sub="Sentuh kain yang paling bicara ke Anda." />
+        <StageMark numeral="" title="Pilih model batik" sub="Sentuh motif yang sesuai dengan kebutuhan Anda." />
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {MOTIFS.map((m) => {
             const active = m.id === motif
@@ -90,7 +91,7 @@ function Screen1({
         </div>
 
         <div className="mt-8">
-          <StageMark title="Atur intensitas pesanan" sub="Makin banyak lembar, makin turun harga per lembarnya." />
+          <StageMark title="Atur intensitas pesanan" sub="Makin banyak kuantitas, harga per lembar menyesuaikan tier grosir." />
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center rounded-2xl border border-sky/70 bg-white">
               <StepBtn onClick={() => setQty(clamp(qty - 1))} label="−" />
@@ -119,17 +120,8 @@ function Screen1({
         </div>
       </div>
 
-      {/* Ringkasan pembeli — harga, stok, SLA */}
       <aside className="flex flex-col gap-5 self-start rounded-3xl border border-sky/60 bg-white p-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <StockBadge risk={ai.stockRisk} readyUsed={ai.readyUsed} />
-          {ai.poQty > 0 && (
-            <span className="rounded-full bg-[color:var(--color-warn)]/15 px-3 py-1 text-[13px] font-medium text-[color:var(--color-warn)]">
-              Pre-order {ai.poQty} lembar
-            </span>
-          )}
-        </div>
-
+        {/* REVISI: Badge stok menipis dan internal log dihapus */}
         <div>
           <Tag>Harga transparan / lembar</Tag>
           <div className="mt-2 flex items-baseline gap-3">
@@ -157,18 +149,18 @@ function Screen1({
           </div>
         </div>
 
-        {/* SLA predictor — kartu celup indigo */}
+        {/* REVISI: SLA berupa Rentang (Range) */}
         <div
-          className="rounded-2xl border border-ocean/30 p-4 text-soft"
+          className="rounded-2xl border border-ocean/30 p-5 text-soft"
           style={{ backgroundImage: 'linear-gradient(180deg,#0a1931,#1a3d63 60%,#2f5b83)' }}
         >
-          <Tag invert>Perkiraan selesai</Tag>
-          <p className="mt-2 font-display text-2xl leading-tight text-soft">{fmtDate(ai.slaDate)}</p>
-          <div className="mt-3 grid grid-cols-3 gap-2 border-t border-white/15 pt-3 font-mono text-[12px] text-sky/85">
-            <span>Bahan {ai.materialLead}h</span>
-            <span>Kerja {ai.productionDays.toFixed(1)}h</span>
-            <span>Finishing {ai.finishing}h</span>
-          </div>
+          <Tag invert>Estimasi Pengerjaan (SLA)</Tag>
+          <p className="mt-2 font-display text-3xl leading-tight text-soft">
+            {minDays} - {maxDays} Hari
+          </p>
+          <p className="mt-2 text-[13px] text-sky/80 border-t border-white/15 pt-3">
+            *Estimasi sudah termasuk waktu pengeringan dan pengecekan kualitas.
+          </p>
         </div>
 
         <div className="flex items-center justify-between border-t border-sky/60 pt-4">
@@ -204,6 +196,9 @@ function Screen2({
   const progress = 0.52
   const activeIndex = 1
   const active = BATIK_STAGES[activeIndex]
+  
+  const minDays = Math.max(1, Math.ceil(ai.totalDays))
+  const maxDays = minDays + 3
 
   return (
     <div className="space-y-8">
@@ -217,7 +212,6 @@ function Screen2({
         sub={`${qty} lembar Batik ${chosen.name} · kode BTK-${chosen.sku.slice(-3)}-${qty}`}
       />
 
-      {/* Komponen Animasi Digital Twin Proses Pembuatan Batik */}
       <BatikDigitalTwinAnimation initialStage={2} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
@@ -277,17 +271,17 @@ function Screen2({
         >
           <div className="flex items-center gap-2">
             <DyeDrop className="h-4 w-3" color="#b3cfe5" />
-            <p className="text-sky/80">Perkiraan tiba di tangan Anda</p>
+            <p className="text-sky/80">SLA Penerimaan Produk</p>
           </div>
-          <p className="font-display text-2xl leading-tight text-soft">{fmtDate(ai.slaDate)}</p>
-          <div className="rounded-2xl bg-white/10 p-4 font-mono text-[13px] text-sky/85">
-            <Row label="Pesan diterima" value={shortDate(new Date('2026-08-16'))} />
-            <Row label="Ready stock" value={`${ai.readyUsed} lembar`} />
-            <Row label="Dibuat baru" value={`${ai.poQty} lembar`} />
-            <Row label="Sisa lead time" value={`${Math.max(0, Math.ceil(ai.totalDays))} hari`} last />
+          <p className="font-display text-3xl leading-tight text-soft">{minDays} - {maxDays} Hari</p>
+          
+          {/* REVISI: Detail internal (ready stock, dibuat baru) dihapus. Cukup transparansi waktu */}
+          <div className="mt-2 rounded-2xl bg-white/10 p-4 font-mono text-[13px] text-sky/85">
+            <Row label="Pesanan diterima" value={shortDate(new Date())} />
+            <Row label="Status" value="Proses Produksi" last />
           </div>
           <p className="text-[13px] leading-relaxed text-sky/60">
-            Kabar tahap berikut dikirim otomatis begitu kain masuk pelorodan.
+            Kabar penyelesaian tiap tahap akan diperbarui secara transparan hingga produk masuk ke tahap akhir (Quality Control).
           </p>
         </aside>
       </div>
