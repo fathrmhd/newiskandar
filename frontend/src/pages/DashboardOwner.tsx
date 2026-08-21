@@ -1,37 +1,25 @@
 import type { FC, ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 import {
-  AlertIcon,
-  CameraIcon,
-  Canting,
   CheckIcon,
-  ClockIcon,
-  DyeDrop,
-  LogIcon,
-  ShieldIcon,
   SlidersIcon,
   StageMark,
   Tag,
   UserIcon,
 } from '@/components/batik'
 import {
-  CENTRAL_CAMERA,
   DEFAULT_MATERIALS,
   DEFAULT_WORKERS,
-  INITIAL_AUDIT_LOGS,
-  type AuditLog,
   type Material,
   type Worker,
   computeAI,
   fmtDate,
   rupiah,
 } from '@/lib/ai'
-import { VisionStream } from '@/components/VisionStream'
 import { BatikDigitalTwinAnimation } from '@/components/BatikDigitalTwinAnimation'
 
 interface DashboardOwnerProps {
   onLogout?: () => void
-  logs?: AuditLog[]
 }
 
 let uid = 100
@@ -39,35 +27,18 @@ const nextId = () => `x${uid++}`
 
 export const DashboardOwner: FC<DashboardOwnerProps> = ({
   onLogout,
-  logs = INITIAL_AUDIT_LOGS,
 }) => {
-  const [activeTab, setActiveTab] = useState<'surveillance' | 'logs' | 'capacity'>('surveillance')
-  const [selectedWorkerFilter, setSelectedWorkerFilter] = useState<string>('all')
-  const [activityTypeFilter, setActivityTypeFilter] = useState<string>('all')
-  const [logFilter, setLogFilter] = useState<'all' | 'warning' | 'resolved'>('all')
+  // Hanya dua tab utama: Manajemen SDM (Kinerja) & Digital Twin (Kapasitas & Gudang)
+  const [activeTab, setActiveTab] = useState<'hr' | 'capacity'>('hr')
 
   const [workers, setWorkers] = useState<Worker[]>(DEFAULT_WORKERS)
   const [materials, setMaterials] = useState<Material[]>(DEFAULT_MATERIALS)
   const [target, setTarget] = useState(40)
 
-  const dailyCapacity = workers.reduce((s, w) => s + (w.rate || 0), 0)
+  // REVISI: Pembulatan kapasitas harian (tanpa koma)
+  const dailyCapacity = Math.round(workers.reduce((s, w) => s + (w.rate || 0), 0))
   const ai = useMemo(() => computeAI(target, dailyCapacity), [target, dailyCapacity])
   const alloc = useMemo(() => allocate(workers, ai.poQty), [workers, ai.poQty])
-
-  // Filter logs untuk Timeline Kronologis Naratif
-  const filteredChronicle = useMemo(() => {
-    return logs.filter((l) => {
-      const matchWorker =
-        selectedWorkerFilter === 'all' || l.workerName.toLowerCase().includes(selectedWorkerFilter.toLowerCase())
-      const matchType =
-        activityTypeFilter === 'all' ||
-        (activityTypeFilter === 'warning' && l.type === 'inactivity_warning') ||
-        (activityTypeFilter === 'movement' && l.type === 'movement') ||
-        (activityTypeFilter === 'break' && (l.type === 'break_start' || l.type === 'break_end')) ||
-        (activityTypeFilter === 'milestone' && l.type === 'task_milestone')
-      return matchWorker && matchType
-    })
-  }, [logs, selectedWorkerFilter, activityTypeFilter])
 
   return (
     <main className="mx-auto max-w-[1180px] px-5 pb-28 pt-8 sm:px-8">
@@ -75,50 +46,39 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-sky/70 bg-white p-5 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-navy text-soft">
-            <ShieldIcon className="h-6 w-6" />
+            <UserIcon className="h-6 w-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-ocean">
-                Pusat Kendali Pemilik Sanggar (Owner)
+                Pusat Kendali Pemilik (Owner)
               </span>
               <span className="rounded-full bg-sky/30 px-2 py-0.5 font-mono text-[11px] text-deep">
-                1 Kamera Sentral AI
+                Sistem Terpadu AI
               </span>
             </div>
             <h1 className="font-display text-2xl text-navy sm:text-3xl">
-              Sanggar Batik Tulis Aceh
+              Manajemen
             </h1>
             <p className="text-xs text-deep/70">
-              Laporan berkala pergerakan pengrajin, waktu istirahat, kepatuhan pos, & kalkulasi HPP.
+              Evaluasi kinerja pengrajin berbasis reward, simulasi antrian produksi, & HPP.
             </p>
           </div>
         </div>
 
-        {/* Tab Navigasi Sub-Fitur & Logout */}
+        {/* Tab Navigasi & Logout */}
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-2xl border border-sky/80 bg-soft p-1.5 shadow-inner">
             <button
-              onClick={() => setActiveTab('surveillance')}
+              onClick={() => setActiveTab('hr')}
               className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
-                activeTab === 'surveillance'
+                activeTab === 'hr'
                   ? 'bg-navy text-soft shadow-sm'
                   : 'text-deep/70 hover:text-navy'
               }`}
             >
-              <CameraIcon className="h-3.5 w-3.5" />
-              Kamera Sentral & Kronologi
-            </button>
-            <button
-              onClick={() => setActiveTab('logs')}
-              className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
-                activeTab === 'logs'
-                  ? 'bg-navy text-soft shadow-sm'
-                  : 'text-deep/70 hover:text-navy'
-              }`}
-            >
-              <LogIcon className="h-3.5 w-3.5" />
-              Laporan Audit ({logs.filter((l) => l.status === 'active_alert').length})
+              <UserIcon className="h-3.5 w-3.5" />
+              Manajemen SDM & Kinerja
             </button>
             <button
               onClick={() => setActiveTab('capacity')}
@@ -129,7 +89,7 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
               }`}
             >
               <SlidersIcon className="h-3.5 w-3.5" />
-              Digital Twin & HPP
+              Digital Twin & Gudang
             </button>
           </div>
 
@@ -144,13 +104,14 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
         </div>
       </div>
 
-      {/* Metric Cards Ringkasan Kinerja Sanggar */}
+      {/* Metric Cards Ringkasan Kinerja Sanggar (Fokus Reward) */}
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-3xl border border-sky/60 bg-white p-5 shadow-sm">
+        <div className="rounded-3xl border border-[color:var(--color-ok)]/40 bg-white p-5 shadow-sm">
           <Tag>Kepatuhan Sanggar</Tag>
-          <p className="mt-2 font-display text-3xl text-navy">96.4%</p>
+          {/* REVISI: Kepatuhan otomatis 100% jika tercapai efektif */}
+          <p className="mt-2 font-display text-3xl text-[color:var(--color-ok)]">100%</p>
           <div className="mt-2 flex items-center justify-between text-xs text-deep/70">
-            <span>4 Pengrajin Terpantau</span>
+            <span>{workers.length} Pengrajin Aktif</span>
             <span className="font-semibold text-[color:var(--color-ok)]">Optimal</span>
           </div>
         </div>
@@ -160,233 +121,86 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
           <p className="mt-2 font-display text-3xl text-navy">31.8 Jam</p>
           <div className="mt-2 flex items-center justify-between text-xs text-deep/70">
             <span>Total Efektivitas Hari Ini</span>
-            <span className="font-mono text-ocean">92% On-Workstation</span>
+            <span className="font-mono text-ocean">Tercapai</span>
           </div>
         </div>
 
+        {/* REVISI: Mengubah sudut pandang hukuman menjadi reward */}
         <div className="rounded-3xl border border-sky/60 bg-white p-5 shadow-sm">
-          <Tag>Insiden Ketiadaan Pos</Tag>
-          <p className="mt-2 font-display text-3xl text-[color:var(--color-warn)]">
-            {logs.filter((l) => l.type === 'inactivity_warning').length} Terdeteksi
+          <Tag>Pencapaian Target / Reward</Tag>
+          <p className="mt-2 font-display text-3xl text-navy">
+            {workers.length} <span className="text-base text-deep/60">Pengrajin</span>
           </p>
           <div className="mt-2 flex items-center justify-between text-xs text-deep/70">
-            <span>Toleransi: 3 Mnt</span>
-            <span className="font-semibold text-[color:var(--color-ok)]">
-              {logs.filter((l) => l.status === 'resolved').length} Tertangani
-            </span>
+            <span>Memenuhi Syarat Insentif</span>
+            <span className="font-semibold text-[color:var(--color-ok)]">Berhak Reward</span>
           </div>
         </div>
 
         <div className="rounded-3xl border border-sky/60 bg-white p-5 shadow-sm">
           <Tag>Kapasitas Harian Sanggar</Tag>
+          {/* REVISI: Pembulatan agar tidak ada koma desimal */}
           <p className="mt-2 font-display text-3xl text-navy">
-            {dailyCapacity.toFixed(2)} <span className="text-base text-deep/60">lbr/hari</span>
+            {dailyCapacity} <span className="text-base text-deep/60">lbr/hari</span>
           </p>
           <div className="mt-2 flex items-center justify-between text-xs text-deep/70">
-            <span>{workers.length} Pembatik Aktif</span>
-            <span className="font-mono text-ocean">1 Sensor Sentral</span>
+            <span>Estimasi Output</span>
+            <span className="font-mono text-ocean">Berdasarkan SDM</span>
           </div>
         </div>
       </div>
 
       {/* ===================================================================== */}
-      {/* SUB-TAB 1: 1 KAMERA SENTRAL & KRONOLOGI AKTIVITAS PENGRAJIN           */}
+      {/* SUB-TAB 1: MANAJEMEN SDM & KINERJA PENGRAJIN (TANPA KAMERA/LOG MENTAH)*/}
       {/* ===================================================================== */}
-      {activeTab === 'surveillance' && (
+      {activeTab === 'hr' && (
         <div className="mt-8 space-y-8">
-          {/* Header Bagian Kamera Sentral */}
           <div>
             <StageMark
               numeral="satu"
-              title="Kamera Sentral Sanggar & Pelaporan AI"
-              sub="1 kamera sentral memantau seluruh area sanggar dan melaporkan secara otomatis jam istirahat, pergerakan pengrajin, dan status pengerjaan."
+              title="Kinerja SDM & Hak Pekerja"
+              sub="Evaluasi berfokus pada penyelesaian tugas. Waktu izin dan istirahat dihormati sebagai hak pekerja dan tidak mengurangi nilai kepatuhan selama SLA terpenuhi."
             />
           </div>
 
-          {/* Layout Grid: 1 Kamera Utama (Kiri) & Live Laporan Naratif Kronologis (Kanan) */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.1fr_1fr]">
-            {/* Kolom 1: Kamera Sentral Tunggal */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-mono text-ocean uppercase tracking-wider">
-                    Sensor Optik Sentral (Wide-Angle)
-                  </span>
-                  <h3 className="font-display text-xl text-navy">
-                    {CENTRAL_CAMERA.name}
-                  </h3>
-                </div>
-                <span className="rounded-full bg-[color:var(--color-ok)]/15 px-3 py-1 font-mono text-xs font-semibold text-[color:var(--color-ok)]">
-                  Live RTSP Standby
-                </span>
-              </div>
-
-              {/* Feed Kamera Sentral Tunggal (Blank Standby / Webcam) */}
-              <VisionStream station={CENTRAL_CAMERA} showControls={true} />
-
-              <div className="rounded-3xl border border-sky/60 bg-white p-5 text-xs text-deep/75 space-y-2">
-                <div className="flex items-center justify-between border-b border-sky/30 pb-2 font-semibold text-navy">
-                  <span>Cakupan Area Sensor Optik:</span>
-                  <span className="text-ocean">Zona Terpadu Sanggar</span>
-                </div>
-                <p>
-                  Kamera sentral ini secara otomatis mendeteksi kehadiran, perpindahan antar-ruang
-                  (meja canting, ruang lilin, bak celup, ruang istirahat), dan jeda istirahat dari
-                  masing-masing pengrajin di sanggar.
-                </p>
-              </div>
-            </div>
-
-            {/* Kolom 2: Laporan Kronologis Aktivitas & Pergerakan Pengrajin */}
-            <div className="flex flex-col rounded-3xl border border-sky/60 bg-white p-6 shadow-sm">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-sky/30 pb-4">
-                <div>
-                  <Tag>Laporan AI Real-Time</Tag>
-                  <h3 className="font-display text-2xl text-navy">Kronologi Aktivitas Pengrajin</h3>
-                </div>
-                <span className="rounded-full bg-soft px-3 py-1 text-xs font-mono text-deep">
-                  {filteredChronicle.length} Peristiwa Terpantau
-                </span>
-              </div>
-
-              {/* Filter Cepat Pengrajin & Tipe */}
-              <div className="mt-4 flex flex-wrap gap-2">
-                <select
-                  value={selectedWorkerFilter}
-                  onChange={(e) => setSelectedWorkerFilter(e.target.value)}
-                  className="rounded-xl border border-sky/70 bg-soft px-3 py-1.5 text-xs font-semibold text-navy outline-none focus:border-ocean transition-colors"
-                >
-                  <option value="all">Semua Pengrajin</option>
-                  <option value="Nuraini">Bu Nuraini (Canting)</option>
-                  <option value="Yusuf">Pak Yusuf (Cap Tembaga)</option>
-                  <option value="Salmah">Bu Salmah (Pewarnaan)</option>
-                  <option value="Ridwan">Pak Ridwan (Pelorodan)</option>
-                </select>
-
-                <select
-                  value={activityTypeFilter}
-                  onChange={(e) => setActivityTypeFilter(e.target.value)}
-                  className="rounded-xl border border-sky/70 bg-soft px-3 py-1.5 text-xs font-semibold text-navy outline-none focus:border-ocean transition-colors"
-                >
-                  <option value="all">Semua Jenis Laporan</option>
-                  <option value="break">Jam Istirahat & Izin</option>
-                  <option value="movement">Pergerakan Antar-Ruang</option>
-                  <option value="warning">Peringatan Ketiadaan Meja</option>
-                  <option value="milestone">Penyelesaian Tahap Produksi</option>
-                </select>
-              </div>
-
-              {/* Timeline Naratif Pengrajin Sesuai Permintaan Pengguna */}
-              <div className="mt-5 space-y-4 max-h-[520px] overflow-y-auto pr-1">
-                {filteredChronicle.map((item) => {
-                  let indicatorColor = 'bg-ocean'
-                  let badgeText = 'Aktivitas'
-                  let badgeBg = 'bg-sky/20 text-deep'
-
-                  if (item.type === 'inactivity_warning') {
-                    indicatorColor = 'bg-[color:var(--color-danger)]'
-                    badgeText = 'Peringatan Ketiadaan'
-                    badgeBg = 'bg-[color:var(--color-danger)]/15 text-[color:var(--color-danger)]'
-                  } else if (item.type === 'break_start' || item.type === 'break_end') {
-                    indicatorColor = 'bg-[color:var(--color-warn)]'
-                    badgeText = 'Istirahat / Jeda'
-                    badgeBg = 'bg-[color:var(--color-warn)]/15 text-[color:var(--color-warn)]'
-                  } else if (item.type === 'movement') {
-                    indicatorColor = 'bg-ocean'
-                    badgeText = 'Pergerakan Ruang'
-                    badgeBg = 'bg-ocean/15 text-ocean'
-                  } else if (item.type === 'task_milestone') {
-                    indicatorColor = 'bg-[color:var(--color-ok)]'
-                    badgeText = 'Penyelesaian Tahap'
-                    badgeBg = 'bg-[color:var(--color-ok)]/15 text-[color:var(--color-ok)]'
-                  }
-
-                  return (
-                    <div
-                      key={item.id}
-                      className="relative flex gap-3.5 rounded-2xl border border-sky/40 bg-soft p-4 transition-all hover:bg-white hover:shadow-sm"
-                    >
-                      {/* Timeline Dot */}
-                      <span
-                        className={`mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full ${indicatorColor}`}
-                      />
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center justify-between gap-1">
-                          <span className="font-mono text-xs font-bold text-navy">
-                            {item.timestamp}
-                          </span>
-                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${badgeBg}`}>
-                            {badgeText}
-                          </span>
-                        </div>
-
-                        {/* Narasi Laporan Kamera AI */}
-                        <p className="mt-1.5 text-xs font-medium text-navy leading-relaxed">
-                          {item.note}
-                        </p>
-
-                        <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px] text-deep/60 font-mono">
-                          <span>Lokasi: {item.location}</span>
-                          {item.destinationLocation && (
-                            <span>→ Menuju: {item.destinationLocation}</span>
-                          )}
-                          {item.durationMinutes && (
-                            <span className="font-semibold text-deep">
-                              Durasi: {item.durationMinutes} menit
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Rekapitulasi Per-Pengrajin (Aktivitas Harian Terpantau Kamera) */}
+          {/* Rekapitulasi Per-Pengrajin */}
           <div className="rounded-3xl border border-sky/60 bg-white p-6 sm:p-8 shadow-sm">
-            <Tag>Rekapitulasi Harian Pengrajin</Tag>
+            <Tag>Kinerja Harian Pengrajin</Tag>
             <h3 className="mt-2 font-display text-2xl text-navy">
-              Analisis Aktivitas & Waktu Kerja Terpantau Kamera Sentral
+              Analisis Aktivitas & Waktu Kerja
             </h3>
             <p className="text-xs text-deep/70 mt-1">
-              Data akumulasi jam kerja produktif, jam istirahat, serta posisi terakhir terpantau AI.
+              Data akumulasi jam kerja produktif dan hak waktu istirahat yang diambil oleh pengrajin.
             </p>
 
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {workers.map((w) => (
                 <div
                   key={w.id}
-                  className="rounded-2xl border border-sky/60 bg-soft p-5 space-y-3"
+                  className="rounded-2xl border border-[color:var(--color-ok)]/30 bg-soft p-5 space-y-3"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky/30 text-deep">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[color:var(--color-ok)]/20 text-deep">
                       <UserIcon className="h-4 w-4" />
                     </span>
-                    <span className="font-mono text-xs font-bold text-[color:var(--color-ok)]">
-                      {w.complianceScore}% Kepatuhan
+                    <span className="font-mono text-xs font-bold text-[color:var(--color-ok)] flex items-center gap-1">
+                      <CheckIcon className="h-3.5 w-3.5" /> 100% Kepatuhan
                     </span>
                   </div>
 
                   <div>
                     <h4 className="font-display text-lg text-navy">{w.name}</h4>
-                    <p className="text-xs text-deep/70">{w.skill}</p>
+                    <p className="text-xs text-deep/70">Posisi: {w.currentLocation || 'Stasiun Kerja'}</p>
                   </div>
 
-                  <div className="space-y-1.5 border-t border-sky/30 pt-2.5 text-xs text-deep/80 font-mono">
+                  <div className="space-y-2 border-t border-sky/30 pt-3 text-xs text-deep/80 font-mono">
                     <div className="flex justify-between">
                       <span>Waktu Aktif:</span>
                       <span className="font-semibold text-navy">{w.activeHoursToday} Jam</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Total Istirahat:</span>
-                      <span>{w.breakMinutesToday} Menit</span>
-                    </div>
-                    <div className="flex justify-between text-[11px] pt-1">
-                      <span className="text-deep/60">Posisi:</span>
-                      <span className="text-ocean truncate max-w-[120px]">{w.currentLocation}</span>
+                      <span>Hak Istirahat:</span>
+                      <span className="text-ocean">{w.breakMinutesToday} Menit</span>
                     </div>
                   </div>
                 </div>
@@ -397,255 +211,101 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
       )}
 
       {/* ===================================================================== */}
-      {/* SUB-TAB 2: LAPORAN & AUDIT LOG EVALUASI LENGKAP                        */}
-      {/* ===================================================================== */}
-      {activeTab === 'logs' && (
-        <div className="mt-8 space-y-6">
-          <StageMark
-            numeral="dua"
-            title="Laporan & Audit Log Evaluasi Lengkap"
-            sub="Rekapitulasi pencatatan otomatis kamera sentral mengenai waktu istirahat, pergerakan, dan kepatuhan pengrajin."
-          />
-
-          {/* Filter Bar */}
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-sky/60 bg-white p-4">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-semibold text-deep/70">Filter Status:</span>
-              <button
-                onClick={() => setLogFilter('all')}
-                className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
-                  logFilter === 'all'
-                    ? 'bg-navy text-soft'
-                    : 'bg-soft text-deep hover:bg-sky/20'
-                }`}
-              >
-                Semua Catatan ({logs.length})
-              </button>
-              <button
-                onClick={() => setLogFilter('warning')}
-                className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
-                  logFilter === 'warning'
-                    ? 'bg-[color:var(--color-danger)] text-soft'
-                    : 'bg-soft text-deep hover:bg-sky/20'
-                }`}
-              >
-                Peringatan Ketiadaan ({logs.filter((l) => l.type === 'inactivity_warning').length})
-              </button>
-              <button
-                onClick={() => setLogFilter('resolved')}
-                className={`rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
-                  logFilter === 'resolved'
-                    ? 'bg-[color:var(--color-ok)] text-soft'
-                    : 'bg-soft text-deep hover:bg-sky/20'
-                }`}
-              >
-                Terselesaikan ({logs.filter((l) => l.status === 'resolved' || l.status === 'approved').length})
-              </button>
-            </div>
-
-            <button
-              onClick={() => alert('Laporan audit aktivitas sanggar berhasil diekspor ke CSV.')}
-              className="rounded-xl border border-ocean bg-ocean/10 px-3.5 py-1.5 text-xs font-semibold text-ocean hover:bg-ocean hover:text-soft transition-all"
-            >
-              Unduh Rekap Audit (CSV)
-            </button>
-          </div>
-
-          {/* Tabel Log */}
-          <div className="overflow-hidden rounded-3xl border border-sky/60 bg-white shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-deep">
-                <thead className="border-b border-sky/50 bg-soft font-mono text-xs text-navy">
-                  <tr>
-                    <th className="px-5 py-3.5">Waktu</th>
-                    <th className="px-5 py-3.5">Pengrajin</th>
-                    <th className="px-5 py-3.5">Lokasi / Stasiun</th>
-                    <th className="px-5 py-3.5">Durasi</th>
-                    <th className="px-5 py-3.5">Tipe Kejadian</th>
-                    <th className="px-5 py-3.5">Status</th>
-                    <th className="px-5 py-3.5">Laporan Kamera AI</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-sky/20">
-                  {logs
-                    .filter((l) => {
-                      if (logFilter === 'warning') return l.type === 'inactivity_warning'
-                      if (logFilter === 'resolved') return l.status === 'resolved' || l.status === 'approved'
-                      return true
-                    })
-                    .map((log) => {
-                      let badgeBg = 'bg-sky/20 text-deep'
-                      let badgeText = 'Info'
-                      if (log.type === 'inactivity_warning') {
-                        badgeBg = 'bg-[color:var(--color-danger)]/15 text-[color:var(--color-danger)]'
-                        badgeText = 'Ketiadaan Pos'
-                      } else if (log.type === 'movement') {
-                        badgeBg = 'bg-ocean/15 text-ocean'
-                        badgeText = 'Pergerakan'
-                      } else if (log.type === 'break_start' || log.type === 'break_end') {
-                        badgeBg = 'bg-[color:var(--color-warn)]/15 text-[color:var(--color-warn)]'
-                        badgeText = 'Istirahat'
-                      } else {
-                        badgeBg = 'bg-[color:var(--color-ok)]/15 text-[color:var(--color-ok)]'
-                        badgeText = 'Selesai Tahap'
-                      }
-
-                      return (
-                        <tr key={log.id} className="hover:bg-soft/60 transition-colors">
-                          <td className="whitespace-nowrap px-5 py-4 font-mono text-xs text-navy font-medium">
-                            {log.timestamp}
-                          </td>
-                          <td className="whitespace-nowrap px-5 py-4 font-semibold text-navy">
-                            {log.workerName}
-                          </td>
-                          <td className="whitespace-nowrap px-5 py-4 text-xs text-deep/80">
-                            {log.location}
-                          </td>
-                          <td className="whitespace-nowrap px-5 py-4 font-mono text-xs">
-                            {log.durationMinutes ? `${log.durationMinutes} menit` : '—'}
-                          </td>
-                          <td className="whitespace-nowrap px-5 py-4">
-                            <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${badgeBg}`}>
-                              {badgeText}
-                            </span>
-                          </td>
-                          <td className="whitespace-nowrap px-5 py-4">
-                            <span
-                              className={`inline-flex items-center gap-1.5 text-xs font-medium ${
-                                log.status === 'active_alert'
-                                  ? 'text-[color:var(--color-danger)] font-bold'
-                                  : log.status === 'resolved'
-                                    ? 'text-[color:var(--color-ok)]'
-                                    : 'text-ocean'
-                              }`}
-                            >
-                              <span
-                                className={`h-1.5 w-1.5 rounded-full ${
-                                  log.status === 'active_alert'
-                                    ? 'bg-[color:var(--color-danger)]'
-                                    : log.status === 'resolved'
-                                      ? 'bg-[color:var(--color-ok)]'
-                                      : 'bg-ocean'
-                                }`}
-                              />
-                              {log.status === 'active_alert'
-                                ? 'Peringatan Aktif'
-                                : log.status === 'resolved'
-                                  ? 'Terselesaikan'
-                                  : 'Tercatat'}
-                            </span>
-                          </td>
-                          <td className="px-5 py-4 text-xs text-deep/75 max-w-sm">
-                            {log.note}
-                          </td>
-                        </tr>
-                      )
-                    })}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ===================================================================== */}
-      {/* SUB-TAB 3: DIGITAL TWIN, KAPASITAS SANGGAR & HPP                       */}
+      {/* SUB-TAB 2: DIGITAL TWIN, KAPASITAS SANGGAR & HPP                       */}
       {/* ===================================================================== */}
       {activeTab === 'capacity' && (
         <div className="mt-8 space-y-8">
           <StageMark
-            numeral="tiga"
-            title="Kapasitas Sanggar & Simulasi HPP"
-            sub="Mesin AI menghitung kesanggupan pengerjaan pesanan, kebutuhan bahan baku gudang, serta batas harga sehat."
+            numeral="dua"
+            title="Kapasitas Sanggar & Manajemen Gudang"
+            sub="Simulasi kesanggupan produksi, kebutuhan suplai bahan baku, serta kalkulasi Harga Pokok Penjualan (HPP)."
           />
 
           {/* Animasi Digital Twin Proses Pembuatan Batik */}
-          <BatikDigitalTwinAnimation initialStage={2} />
+          <BatikDigitalTwinAnimation initialStage={1} />
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.15fr_1fr]">
-            {/* Kolom input mentah */}
+            {/* Kolom Input Simulasi */}
             <div className="flex flex-col gap-10">
-              {/* Pekerja */}
+              {/* Pengaturan SDM */}
               <section>
-                <StageMark
-                  numeral="satu"
-                  title="Tangan yang membatik"
-                  sub="Berapa lembar sanggup diselesaikan tiap orang dalam sehari?"
-                />
+                <div className="mb-4">
+                  <h3 className="font-display text-xl text-navy">Distribusi Beban Kerja</h3>
+                  <p className="text-sm text-deep/70">Atur kemampuan produksi harian per individu.</p>
+                </div>
                 <div className="flex flex-col gap-3">
                   {workers.map((w, i) => (
                     <div key={w.id} className="rounded-2xl border border-sky/60 bg-white p-4">
                       <div className="flex items-center justify-between">
-                        <span className="hand-numeral text-xl text-ocean/70">
-                          Pembatik {i + 1}
+                        <span className="font-semibold text-ocean">
+                          Pengrajin {i + 1}
                         </span>
                         {workers.length > 1 && (
                           <button
                             onClick={() => setWorkers(workers.filter((x) => x.id !== w.id))}
                             className="text-[13px] text-deep/50 hover:text-[color:var(--color-danger)]"
                           >
-                            hapus
+                            Hapus
                           </button>
                         )}
                       </div>
                       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[1.2fr_1.2fr_auto]">
-                        <Field label="Nama">
+                        <Field label="Nama Pengrajin">
                           <input
                             value={w.name}
                             onChange={(e) => patch(setWorkers, workers, w.id, { name: e.target.value })}
                             className={inputCls}
-                            placeholder="mis. Bu Nuraini"
+                            placeholder="Contoh: Budi"
                           />
                         </Field>
-                        <Field label="Keahlian">
+                        <Field label="Stasiun Keahlian">
                           <input
                             value={w.skill}
                             onChange={(e) => patch(setWorkers, workers, w.id, { skill: e.target.value })}
                             className={inputCls}
-                            placeholder="mis. pewarnaan indigo"
+                            placeholder="Contoh: Canting"
                           />
                         </Field>
-                        <Field label="Lembar / hari">
+                        <Field label="Target Harian (Lbr)">
                           <input
                             type="number"
-                            step="0.05"
-                            min={0}
+                            step="1"
+                            min={1}
                             value={w.rate}
-                            onChange={(e) => patch(setWorkers, workers, w.id, { rate: Number(e.target.value) })}
+                            onChange={(e) => patch(setWorkers, workers, w.id, { rate: Math.round(Number(e.target.value)) })}
                             className={`${inputCls} w-24 text-center font-mono`}
                           />
                         </Field>
                       </div>
                     </div>
                   ))}
-                  <AddBtn onClick={() => setWorkers([...workers, { id: nextId(), name: '', skill: '', rate: 0.5 }])}>
-                    Tambah pembatik
+                  <AddBtn onClick={() => setWorkers([...workers, { id: nextId(), name: '', skill: '', rate: 1 }])}>
+                    Tambah Pengrajin
                   </AddBtn>
                 </div>
               </section>
 
-              {/* Material */}
+              {/* Pengaturan Gudang & Material */}
               <section>
-                <StageMark
-                  numeral="dua"
-                  title="Bahan di gudang"
-                  sub="Beli banyak sekaligus, supplier beri harga miring — batas diskonnya diisi di sini."
-                />
+                <div className="mb-4">
+                  <h3 className="font-display text-xl text-navy">Manajemen Stok Bahan Baku</h3>
+                  <p className="text-sm text-deep/70">Atur batas kebutuhan minimum untuk memicu pembelian grosir.</p>
+                </div>
                 <div className="flex flex-col gap-3">
                   {materials.map((m) => {
                     const discount = m.need >= m.minDiscount
                     return (
                       <div key={m.id} className="rounded-2xl border border-sky/60 bg-white p-4">
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-[1.6fr_1fr_1fr_auto] sm:items-end">
-                          <Field label="Nama bahan">
+                          <Field label="Nama Bahan">
                             <input
                               value={m.name}
                               onChange={(e) => patch(setMaterials, materials, m.id, { name: e.target.value })}
                               className={inputCls}
-                              placeholder="mis. malam / lilin"
+                              placeholder="Kain Mori / Lilin"
                             />
                           </Field>
-                          <Field label={`Kebutuhan (${m.unit})`}>
+                          <Field label="Kuantitas">
                             <input
                               type="number"
                               min={0}
@@ -654,49 +314,69 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
                               className={`${inputCls} font-mono`}
                             />
                           </Field>
-                          <Field label="Min. diskon">
-                            <input
-                              type="number"
-                              min={0}
-                              value={m.minDiscount}
-                              onChange={(e) => patch(setMaterials, materials, m.id, { minDiscount: Number(e.target.value) })}
-                              className={`${inputCls} font-mono`}
-                            />
+                          
+                          {/* REVISI: Mengubah satuan baku menjadi bentuk Dropdown (Selection) */}
+                          <Field label="Satuan Unit">
+                            <select
+                              value={m.unit}
+                              onChange={(e) => patch(setMaterials, materials, m.id, { unit: e.target.value })}
+                              className={inputCls}
+                            >
+                              <option value="Meter (m)">Meter (m)</option>
+                              <option value="Kilogram (kg)">Kilogram (kg)</option>
+                              <option value="Yard">Yard</option>
+                              <option value="Pcs">Pcs</option>
+                              <option value="Liter (l)">Liter (l)</option>
+                            </select>
                           </Field>
+
                           {materials.length > 1 && (
                             <button
                               onClick={() => setMaterials(materials.filter((x) => x.id !== m.id))}
                               className="pb-2.5 text-[13px] text-deep/50 hover:text-[color:var(--color-danger)]"
                             >
-                              hapus
+                              Hapus
                             </button>
                           )}
                         </div>
-                        <p
-                          className="mt-2 text-[13px] font-medium"
-                          style={{ color: discount ? 'var(--color-ok)' : 'var(--color-warn)' }}
-                        >
-                          {discount
-                            ? `✓ Cukup untuk harga grosir — hemat bahan aktif`
-                            : `Kurang ${m.minDiscount - m.need} ${m.unit} lagi untuk dapat harga grosir`}
-                        </p>
+                        <div className="mt-3 flex items-center justify-between border-t border-sky/30 pt-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-deep/60">Batas Minimum Harga Grosir:</span>
+                            <input
+                              type="number"
+                              min={1}
+                              value={m.minDiscount}
+                              onChange={(e) => patch(setMaterials, materials, m.id, { minDiscount: Number(e.target.value) })}
+                              className="w-16 rounded border border-sky/70 bg-soft px-2 py-1 text-xs outline-none focus:border-ocean"
+                            />
+                            <span className="text-xs font-mono">{m.unit}</span>
+                          </div>
+                          <p
+                            className="text-[12px] font-medium"
+                            style={{ color: discount ? 'var(--color-ok)' : 'var(--color-warn)' }}
+                          >
+                            {discount
+                              ? `✓ Syarat grosir terpenuhi`
+                              : `Butuh ${m.minDiscount - m.need} ${m.unit} lagi`}
+                          </p>
+                        </div>
                       </div>
                     )
                   })}
-                  <AddBtn onClick={() => setMaterials([...materials, { id: nextId(), name: '', need: 0, unit: 'kg', minDiscount: 10 }])}>
-                    Tambah jenis bahan
+                  <AddBtn onClick={() => setMaterials([...materials, { id: nextId(), name: '', need: 0, unit: 'Kilogram (kg)', minDiscount: 10 }])}>
+                    Tambah Jenis Bahan Baku
                   </AddBtn>
                 </div>
               </section>
             </div>
 
-            {/* Kolom hasil AI */}
+            {/* Kolom Hasil AI & Estimasi */}
             <div className="flex flex-col gap-5 lg:sticky lg:top-24 lg:self-start">
-              {/* Uji kesanggupan */}
-              <div className="rounded-3xl border border-sky/60 bg-white p-6">
-                <Tag>Uji kesanggupan</Tag>
-                <p className="mt-2 text-[15px] text-deep/70">Ada pesanan masuk sekian lembar — sanggup?</p>
-                <div className="mt-3 flex items-center gap-3">
+              {/* Uji Kesanggupan */}
+              <div className="rounded-3xl border border-sky/60 bg-white p-6 shadow-sm">
+                <Tag>Simulasi Antrian Produksi</Tag>
+                <p className="mt-2 text-[15px] text-deep/70">Uji kapasitas waktu berdasarkan jumlah pesanan masuk.</p>
+                <div className="mt-4 flex items-center gap-3">
                   <div className="flex items-center rounded-2xl border border-sky/70 bg-soft">
                     <button
                       onClick={() => setTarget(Math.max(1, target - 1))}
@@ -718,39 +398,39 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
                       +
                     </button>
                   </div>
-                  <span className="text-sm text-deep/60">lembar</span>
+                  <span className="text-sm text-deep/60">Lembar Kain</span>
                 </div>
               </div>
 
               {/* Kesanggupan & SLA */}
               <div
-                className="rounded-3xl border border-ocean/30 p-6 text-soft"
+                className="rounded-3xl border border-ocean/30 p-6 text-soft shadow-sm"
                 style={{ backgroundImage: 'linear-gradient(180deg,#0a1931,#1a3d63 65%,#2f5b83)' }}
               >
-                <Tag invert>Sanggup selesai</Tag>
+                <Tag invert>Estimasi Selesai (SLA)</Tag>
                 <p className="mt-2 font-display text-2xl leading-tight">{fmtDate(ai.slaDate)}</p>
                 <div className="mt-4 grid grid-cols-2 gap-3 border-t border-white/15 pt-4 font-mono text-[13px] text-sky/85">
-                  <Stat label="Kapasitas sanggar" value={`${dailyCapacity.toFixed(2)} lbr/hari`} />
-                  <Stat label="Dibuat baru" value={`${ai.poQty} lembar`} />
-                  <Stat label="Dari stok siap" value={`${ai.readyUsed} lembar`} />
-                  <Stat label="Total waktu" value={`${Math.ceil(ai.totalDays)} hari`} />
+                  <Stat label="Kapasitas Sanggar" value={`${dailyCapacity} lbr/hari`} />
+                  <Stat label="Beban Produksi Baru" value={`${ai.poQty} lembar`} />
+                  <Stat label="Total Waktu Antrian" value={`${Math.ceil(ai.totalDays)} Hari`} />
+                  <Stat label="Sisa Bahan Siap" value={`${ai.readyUsed} lembar`} />
                 </div>
               </div>
 
-              {/* Pembagian kerja — Digital Twin */}
-              <div className="rounded-3xl border border-sky/60 bg-white p-6">
-                <Tag>Pembagian ke pembatik</Tag>
-                <p className="mt-1 text-[15px] text-deep/70">
-                  {ai.poQty} lembar dibagi adil sesuai kecepatan tiap orang.
+              {/* Pembagian Kerja */}
+              <div className="rounded-3xl border border-sky/60 bg-white p-6 shadow-sm">
+                <Tag>Distribusi Target Harian</Tag>
+                <p className="mt-1 text-[13px] text-deep/70">
+                  {ai.poQty} lembar pesanan dibagi sesuai kapasitas rata-rata tiap pekerja.
                 </p>
                 <div className="mt-4 flex flex-col gap-3">
                   {alloc.map((a) => (
                     <div key={a.id}>
                       <div className="flex items-baseline justify-between text-sm">
-                        <span className="font-medium text-navy">{a.name || 'Pembatik'}</span>
-                        <span className="font-mono text-navy">{a.assigned} lbr</span>
+                        <span className="font-medium text-navy">{a.name || 'Pengrajin'}</span>
+                        <span className="font-mono text-ocean">{a.assigned} lbr</span>
                       </div>
-                      <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-sky/40">
+                      <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-sky/30">
                         <div
                           className="h-full rounded-full bg-ocean transition-all"
                           style={{ width: `${a.load}%` }}
@@ -761,22 +441,26 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
                 </div>
               </div>
 
-              {/* HPP */}
-              <div className="rounded-3xl border border-sky/60 bg-white p-6">
-                <Tag>Modal & harga sehat</Tag>
-                <div className="mt-3 flex items-baseline justify-between">
-                  <span className="text-[15px] text-deep/70">HPP / lembar</span>
+              {/* Struktur HPP & Margin */}
+              <div className="rounded-3xl border border-sky/60 bg-white p-6 shadow-sm">
+                <Tag>Struktur HPP & Penentuan Harga</Tag>
+                <div className="mt-3 flex items-baseline justify-between border-b border-sky/30 pb-3">
+                  <span className="text-[14px] text-deep/70 font-semibold">Harga Pokok (HPP)</span>
                   <span className="font-display text-3xl text-navy">{rupiah(ai.hpp)}</span>
                 </div>
-                <div className="mt-3 space-y-1.5 font-mono text-[13px] text-deep/75">
-                  <Line label="Bahan (tier " b={ai.tier.label} value={rupiah(ai.materialPerUnit)} />
-                  <Line label="Overhead (malam, listrik)" value={rupiah(ai.overhead)} />
-                  <Line label="Tenaga pembatik" value={rupiah(ai.labor)} />
+                <div className="mt-4 space-y-2 font-mono text-[12px] text-deep/75">
+                  <Line label="Bahan Baku & Pewarna" value={rupiah(ai.materialPerUnit)} />
+                  <Line label="Tenaga Kerja (SDM)" value={rupiah(ai.labor)} />
+                  <Line label="Overhead (Operasional)" value={rupiah(ai.overhead)} />
                 </div>
-                <div className="mt-4 flex items-center justify-between rounded-xl bg-soft px-3 py-2.5">
-                  <span className="text-sm text-deep/70">Untung @ {rupiah(ai.tier.price)}</span>
-                  <span className="font-display text-lg text-[color:var(--color-ok)]">
-                    {rupiah(ai.margin)} · {ai.marginPct.toFixed(0)}%
+                <div className="mt-5 flex items-center justify-between rounded-xl bg-[color:var(--color-ok)]/10 px-4 py-3 border border-[color:var(--color-ok)]/20">
+                  <div>
+                    <span className="text-[11px] uppercase tracking-wider text-[color:var(--color-ok)] font-bold block mb-0.5">Potensi Keuntungan</span>
+                    <span className="text-[13px] font-medium text-navy">Harga Jual: {rupiah(ai.tier.price)}</span>
+                  </div>
+                  <span className="font-display text-xl text-[color:var(--color-ok)] text-right">
+                    {rupiah(ai.margin)} <br/>
+                    <span className="text-xs font-mono">{ai.marginPct.toFixed(0)}% Margin</span>
                   </span>
                 </div>
               </div>
@@ -788,15 +472,15 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
   )
 }
 
-/* --------------------------- helpers --------------------------- */
+/* --------------------------- Helper Functions --------------------------- */
 
 const inputCls =
-  'w-full rounded-lg border border-sky/70 bg-soft px-3 py-2 text-sm text-navy outline-none transition-colors focus:border-ocean'
+  'w-full rounded-xl border border-sky/70 bg-soft px-3 py-2 text-sm text-navy outline-none transition-colors focus:border-ocean'
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <label className="block">
-      <span className="mb-1 block text-[13px] text-deep/60">{label}</span>
+    <label className="block w-full">
+      <span className="mb-1 block text-[12px] font-semibold text-deep/70 uppercase tracking-wide">{label}</span>
       {children}
     </label>
   )
@@ -806,7 +490,7 @@ function AddBtn({ onClick, children }: { onClick: () => void; children: ReactNod
   return (
     <button
       onClick={onClick}
-      className="flex items-center justify-center gap-2 rounded-2xl border border-dashed border-ocean/50 py-3 text-sm font-semibold text-ocean transition-colors hover:border-ocean hover:bg-ocean/5"
+      className="flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-ocean/50 py-3.5 text-sm font-semibold text-ocean transition-colors hover:border-ocean hover:bg-ocean/5"
     >
       + {children}
     </button>
@@ -816,20 +500,17 @@ function AddBtn({ onClick, children }: { onClick: () => void; children: ReactNod
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-sky/60">{label}</p>
-      <p className="text-soft">{value}</p>
+      <p className="text-sky/60 mb-0.5">{label}</p>
+      <p className="text-soft font-semibold">{value}</p>
     </div>
   )
 }
 
-function Line({ label, b, value }: { label: string; b?: string; value: string }) {
+function Line({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between border-b border-sky/40 pb-1.5">
-      <span>
-        {label}
-        {b ? <>{b})</> : null}
-      </span>
-      <span className="text-navy">{value}</span>
+    <div className="flex items-center justify-between border-b border-sky/30 pb-2 pt-1">
+      <span>{label}</span>
+      <span className="font-semibold text-navy">{value}</span>
     </div>
   )
 }
