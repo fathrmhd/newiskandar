@@ -52,21 +52,18 @@ export const Landing: FC<LandingProps> = ({ go }) => {
           {/* Eyebrow */}
           <div className="flex items-center gap-2 text-sky/80">
             <DyeDrop className="h-4 w-3" color="#b3cfe5" />
-            <span className="text-sm font-medium">Batik Tulis Aceh · Sanggar Pengrajin</span>
+            <span className="text-sm font-medium">Batik Tulis · Sanggar Pengrajin</span>
           </div>
 
           {/* Hero Title */}
           <h1 className="mt-6 font-display text-4xl leading-[1.15] text-soft sm:text-6xl lg:text-7xl">
-            Malam mendingin di kain.<br />
-            Keputusan tak boleh ikut mendingin.
+            TwinCraft
           </h1>
 
           <Canting className="mt-6 h-2.5 w-64 text-ocean/80" />
 
           {/* Subtitle */}
-          <p className="mt-8 max-w-2xl text-base leading-relaxed text-sky/75 sm:text-lg">
-            New Iskandar menautkan tangan pembatik dengan pasar dunia lewat satu mesin AI. Harga, kapasitas, rute, dan pengawasan mutu dihitung sejujur guratan canting.
-          </p>
+
 
           {/* Action Cards untuk Tiga Peran */}
           <div className="mt-12 grid max-w-3xl gap-4 sm:grid-cols-3">
