@@ -1,6 +1,7 @@
 import type { FC, ReactNode } from 'react'
 import { useMemo, useState } from 'react'
 import {
+  CameraIcon,
   CheckIcon,
   SlidersIcon,
   StageMark,
@@ -8,6 +9,7 @@ import {
   UserIcon,
 } from '@/components/batik'
 import {
+  CENTRAL_CAMERA,
   DEFAULT_MATERIALS,
   DEFAULT_WORKERS,
   type Material,
@@ -16,6 +18,7 @@ import {
   fmtDate,
   rupiah,
 } from '@/lib/ai'
+import { VisionStream } from '@/components/VisionStream'
 import { BatikDigitalTwinAnimation } from '@/components/BatikDigitalTwinAnimation'
 
 interface DashboardOwnerProps {
@@ -28,14 +31,14 @@ const nextId = () => `x${uid++}`
 export const DashboardOwner: FC<DashboardOwnerProps> = ({
   onLogout,
 }) => {
-  // Hanya dua tab utama: Manajemen SDM (Kinerja) & Digital Twin (Kapasitas & Gudang)
-  const [activeTab, setActiveTab] = useState<'hr' | 'capacity'>('hr')
+  // Ditambahkan kembali tab 'surveillance' sebagai default
+  const [activeTab, setActiveTab] = useState<'surveillance' | 'hr' | 'capacity'>('surveillance')
 
   const [workers, setWorkers] = useState<Worker[]>(DEFAULT_WORKERS)
   const [materials, setMaterials] = useState<Material[]>(DEFAULT_MATERIALS)
   const [target, setTarget] = useState(40)
 
-  // REVISI: Pembulatan kapasitas harian (tanpa koma)
+  // Pembulatan kapasitas harian
   const dailyCapacity = Math.round(workers.reduce((s, w) => s + (w.rate || 0), 0))
   const ai = useMemo(() => computeAI(target, dailyCapacity), [target, dailyCapacity])
   const alloc = useMemo(() => allocate(workers, ai.poQty), [workers, ai.poQty])
@@ -58,10 +61,10 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
               </span>
             </div>
             <h1 className="font-display text-2xl text-navy sm:text-3xl">
-              Manajemen
+              Manajemen Sanggar Batik
             </h1>
             <p className="text-xs text-deep/70">
-              Evaluasi kinerja pengrajin berbasis reward, simulasi antrian produksi, & HPP.
+              Evaluasi kinerja pengrajin, pantauan visual, & simulasi antrian produksi.
             </p>
           </div>
         </div>
@@ -69,6 +72,17 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
         {/* Tab Navigasi & Logout */}
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-2xl border border-sky/80 bg-soft p-1.5 shadow-inner">
+            <button
+              onClick={() => setActiveTab('surveillance')}
+              className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
+                activeTab === 'surveillance'
+                  ? 'bg-navy text-soft shadow-sm'
+                  : 'text-deep/70 hover:text-navy'
+              }`}
+            >
+              <CameraIcon className="h-3.5 w-3.5" />
+              Kamera
+            </button>
             <button
               onClick={() => setActiveTab('hr')}
               className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
@@ -78,7 +92,7 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
               }`}
             >
               <UserIcon className="h-3.5 w-3.5" />
-              Manajemen SDM & Kinerja
+              Manajemen SDM
             </button>
             <button
               onClick={() => setActiveTab('capacity')}
@@ -108,7 +122,6 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-3xl border border-[color:var(--color-ok)]/40 bg-white p-5 shadow-sm">
           <Tag>Kepatuhan Sanggar</Tag>
-          {/* REVISI: Kepatuhan otomatis 100% jika tercapai efektif */}
           <p className="mt-2 font-display text-3xl text-[color:var(--color-ok)]">100%</p>
           <div className="mt-2 flex items-center justify-between text-xs text-deep/70">
             <span>{workers.length} Pengrajin Aktif</span>
@@ -125,7 +138,6 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
           </div>
         </div>
 
-        {/* REVISI: Mengubah sudut pandang hukuman menjadi reward */}
         <div className="rounded-3xl border border-sky/60 bg-white p-5 shadow-sm">
           <Tag>Pencapaian Target / Reward</Tag>
           <p className="mt-2 font-display text-3xl text-navy">
@@ -139,7 +151,6 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
 
         <div className="rounded-3xl border border-sky/60 bg-white p-5 shadow-sm">
           <Tag>Kapasitas Harian Sanggar</Tag>
-          {/* REVISI: Pembulatan agar tidak ada koma desimal */}
           <p className="mt-2 font-display text-3xl text-navy">
             {dailyCapacity} <span className="text-base text-deep/60">lbr/hari</span>
           </p>
@@ -151,13 +162,54 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
       </div>
 
       {/* ===================================================================== */}
-      {/* SUB-TAB 1: MANAJEMEN SDM & KINERJA PENGRAJIN (TANPA KAMERA/LOG MENTAH)*/}
+      {/* SUB-TAB 1: KAMERA SENTRAL (HANYA DISPLAY / VISUAL)                    */}
+      {/* ===================================================================== */}
+      {activeTab === 'surveillance' && (
+        <div className="mt-8 space-y-6">
+          <StageMark
+            numeral="satu"
+            title="Pantauan Visual Sanggar"
+            sub="Tampilan langsung (live stream) dari kamera sentral untuk memastikan kelancaran alur kerja di area produksi."
+          />
+          
+          <div className="rounded-3xl border border-sky/60 bg-white p-6 shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-sky/30 pb-4 mb-6">
+              <div>
+                <h3 className="font-display text-xl text-navy">
+                  {CENTRAL_CAMERA.name}
+                </h3>
+                <p className="text-xs text-deep/70 mt-1">Area Cakupan: Zona Terpadu Sanggar</p>
+              </div>
+              <span className="rounded-full bg-[color:var(--color-ok)]/15 px-3 py-1 font-mono text-xs font-semibold text-[color:var(--color-ok)] flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[color:var(--color-ok)] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[color:var(--color-ok)]"></span>
+                </span>
+                Live RTSP Standby
+              </span>
+            </div>
+
+            {/* Komponen Kamera Ditaruh di Tengah dan Lebar */}
+            <div className="mx-auto max-w-4xl overflow-hidden rounded-2xl border border-sky/40 bg-soft shadow-inner">
+              {/* showControls diubah jadi false agar tidak ada tombol aneh */}
+              <VisionStream station={CENTRAL_CAMERA} showControls={false} />
+            </div>
+
+            <p className="mt-6 text-center text-xs text-deep/60 bg-soft/50 py-3 rounded-xl border border-sky/30 max-w-2xl mx-auto">
+              Kamera ini murni digunakan sebagai antarmuka pantauan visual (*display only*). Pencatatan log aktivitas yang mengikat sudah dinonaktifkan demi kenyamanan dan fokus pengrajin terhadap target (reward).
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ===================================================================== */}
+      {/* SUB-TAB 2: MANAJEMEN SDM & KINERJA PENGRAJIN (TANPA KAMERA/LOG MENTAH)*/}
       {/* ===================================================================== */}
       {activeTab === 'hr' && (
         <div className="mt-8 space-y-8">
           <div>
             <StageMark
-              numeral="satu"
+              numeral="dua"
               title="Kinerja SDM & Hak Pekerja"
               sub="Evaluasi berfokus pada penyelesaian tugas. Waktu izin dan istirahat dihormati sebagai hak pekerja dan tidak mengurangi nilai kepatuhan selama SLA terpenuhi."
             />
@@ -199,7 +251,7 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
                       <span className="font-semibold text-navy">{w.activeHoursToday} Jam</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Hak Istirahat:</span>
+                      <span>Durasi Istirahat:</span>
                       <span className="text-ocean">{w.breakMinutesToday} Menit</span>
                     </div>
                   </div>
@@ -211,17 +263,16 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
       )}
 
       {/* ===================================================================== */}
-      {/* SUB-TAB 2: DIGITAL TWIN, KAPASITAS SANGGAR & HPP                       */}
+      {/* SUB-TAB 3: DIGITAL TWIN, KAPASITAS SANGGAR & HPP                       */}
       {/* ===================================================================== */}
       {activeTab === 'capacity' && (
         <div className="mt-8 space-y-8">
           <StageMark
-            numeral="dua"
+            numeral="tiga"
             title="Kapasitas Sanggar & Manajemen Gudang"
             sub="Simulasi kesanggupan produksi, kebutuhan suplai bahan baku, serta kalkulasi Harga Pokok Penjualan (HPP)."
           />
 
-          {/* Animasi Digital Twin Proses Pembuatan Batik */}
           <BatikDigitalTwinAnimation initialStage={1} />
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.15fr_1fr]">
@@ -314,8 +365,6 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
                               className={`${inputCls} font-mono`}
                             />
                           </Field>
-                          
-                          {/* REVISI: Mengubah satuan baku menjadi bentuk Dropdown (Selection) */}
                           <Field label="Satuan Unit">
                             <select
                               value={m.unit}
@@ -329,7 +378,6 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({
                               <option value="Liter (l)">Liter (l)</option>
                             </select>
                           </Field>
-
                           {materials.length > 1 && (
                             <button
                               onClick={() => setMaterials(materials.filter((x) => x.id !== m.id))}
