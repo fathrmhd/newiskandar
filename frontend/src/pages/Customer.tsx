@@ -17,10 +17,13 @@ import {
   shortDate,
 } from "@/lib/ai";
 
+const BRAND_GRADIENT = "linear-gradient(180deg,#0a1931,#1a3d63 60%,#2f5b83)";
+
 export default function Customer() {
   const [step, setStep] = useState<1 | 2>(1);
   const [motif, setMotif] = useState(MOTIFS[0].id);
   const [qty, setQty] = useState(24);
+
   const ai = useMemo(() => computeAI(qty), [qty]);
   const chosen = MOTIFS.find((m) => m.id === motif) ?? MOTIFS[0];
 
@@ -65,21 +68,18 @@ function Screen1({
 }) {
   const clamp = (n: number) => Math.max(1, Math.min(2000, Math.round(n || 1)));
 
-  // Kalkulasi Rentang SLA (Range) dengan buffer toleransi waktu idle/istirahat
   const minDays = Math.max(1, Math.ceil(ai.totalDays));
   const maxDays = minDays + 3;
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.1fr_1fr]">
       <div>
-        <StageMark
-          numeral="satu"
-          title="Pilih model batik"
-          sub="Sentuh motif yang sesuai dengan kebutuhan Anda."
-        />
+        <StageMark title="Pilih motif batik" />
+
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {MOTIFS.map((m) => {
             const active = m.id === motif;
+
             return (
               <button
                 key={m.id}
@@ -96,16 +96,19 @@ function Screen1({
                     alt={`Batik motif ${m.name}`}
                     className="h-36 w-full bg-[#d9cdb6] object-cover"
                   />
+
                   <span
                     className={`absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 ${
                       active
-                        ? "border-ocean bg-ocean text-soft"
+                        ? "border-white/30 text-soft shadow-sm"
                         : "border-white bg-white/70"
                     }`}
+                    style={active ? { backgroundImage: BRAND_GRADIENT } : undefined}
                   >
                     {active && <CheckIcon className="h-3.5 w-3.5" />}
                   </span>
                 </div>
+
                 <div className="bg-white px-3 py-2">
                   <p className="font-display text-[17px] text-navy">{m.name}</p>
                   <p className="font-mono text-[11px] text-ocean/80">{m.sku}</p>
@@ -117,12 +120,13 @@ function Screen1({
 
         <div className="mt-8">
           <StageMark
-            title="Atur intensitas pesanan"
-            sub="Makin banyak kuantitas, harga per lembar menyesuaikan tier grosir."
+            title="Atur jumlah pesanan"
           />
+
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center rounded-2xl border border-sky/70 bg-white">
               <StepBtn onClick={() => setQty(clamp(qty - 1))} label="−" />
+
               <input
                 type="number"
                 value={qty}
@@ -130,8 +134,10 @@ function Screen1({
                 onChange={(e) => setQty(clamp(Number(e.target.value)))}
                 className="w-20 bg-transparent py-3 text-center font-display text-2xl text-navy outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
               />
+
               <StepBtn onClick={() => setQty(clamp(qty + 1))} label="+" />
             </div>
+
             <div className="flex gap-2">
               {[10, 50, 100].map((v) => (
                 <button
@@ -143,6 +149,7 @@ function Screen1({
                 </button>
               ))}
             </div>
+
             <span className="text-sm text-deep/60">lembar</span>
           </div>
         </div>
@@ -150,31 +157,33 @@ function Screen1({
 
       <aside className="flex flex-col gap-5 self-start rounded-3xl border border-sky/60 bg-white p-6">
         <div>
-          <Tag>Harga transparan / lembar</Tag>
+          <Tag>Harga</Tag>
+
           <div className="mt-2 flex items-baseline gap-3">
             <span className="font-display text-[2.6rem] leading-none text-navy">
               {rupiah(ai.tier.price)}
             </span>
-            <span className="rounded-lg bg-deep px-2.5 py-1 text-xs font-medium text-soft">
-              Tier {ai.tier.label}
-            </span>
           </div>
+
           <div className="mt-3 grid grid-cols-3 gap-2">
             {TIERS.map((t) => {
               const active = t === ai.tier;
+
               return (
                 <button
                   key={t.label}
                   onClick={() => setQty(t.min === 1 ? 5 : t.min)}
                   className={`rounded-xl border px-2.5 py-2 text-left transition-all ${
                     active
-                      ? "border-ocean bg-ocean text-soft"
+                      ? "border-ocean/40 text-soft shadow-sm"
                       : "border-sky/70 bg-soft text-deep hover:border-ocean"
                   }`}
+                  style={active ? { backgroundImage: BRAND_GRADIENT } : undefined}
                 >
                   <p className="font-mono text-[11px] opacity-80">
                     {t.max === Infinity ? `${t.min}+` : `${t.min}–${t.max}`}
                   </p>
+
                   <p className="mt-0.5 text-sm font-semibold">
                     {rupiah(t.price)}
                   </p>
@@ -186,31 +195,32 @@ function Screen1({
 
         <div
           className="rounded-2xl border border-ocean/30 p-5 text-soft"
-          style={{
-            backgroundImage:
-              "linear-gradient(180deg,#0a1931,#1a3d63 60%,#2f5b83)",
-          }}
+          style={{ backgroundImage: BRAND_GRADIENT }}
         >
           <Tag invert>Estimasi Pengerjaan</Tag>
+
           <p className="mt-2 font-display text-3xl leading-tight text-soft">
             {minDays} - {maxDays} Hari
           </p>
+
           <p className="mt-2 text-[13px] text-sky/80 border-t border-white/15 pt-3">
-            *Estimasi sudah termasuk antrian, waktu pengeringan, dan kontrol
-            kualitas.
+            *Estimasi sudah termasuk antrian dan waktu produksi
           </p>
         </div>
 
         <div className="flex items-center justify-between border-t border-sky/60 pt-4">
           <div>
             <Tag>Subtotal {qty} lembar</Tag>
+
             <p className="font-display text-2xl text-navy">
               {rupiah(ai.subtotal)}
             </p>
           </div>
+
           <button
             onClick={onNext}
-            className="rounded-2xl bg-ocean px-6 py-3 font-semibold text-soft transition-all hover:bg-deep active:scale-[0.98]"
+            className="rounded-2xl px-6 py-3 font-semibold text-soft transition-all hover:opacity-90 active:scale-[0.98] shadow-sm"
+            style={{ backgroundImage: BRAND_GRADIENT }}
           >
             Proses pesanan
           </button>
@@ -233,7 +243,7 @@ function Screen2({
   ai: ReturnType<typeof computeAI>;
   onBack: () => void;
 }) {
-  const activeIndex = 1; // Simulasi: Tahap aktif (indeks 1 = Nyanting/Pewarnaan)
+  const activeIndex = 1;
   const active = BATIK_STAGES[activeIndex];
 
   const minDays = Math.max(1, Math.ceil(ai.totalDays));
@@ -264,13 +274,13 @@ function Screen2({
           <h2 className="font-display text-4xl text-navy sm:text-5xl">
             {active.name}
           </h2>
+
           <p className="mt-4 max-w-md text-base leading-relaxed text-deep/70">
             {active.note}
           </p>
 
           {/* Kotak Ilustrasi Tunggal */}
           <div className="mt-10 flex h-48 w-full max-w-sm flex-col items-center justify-center rounded-2xl border border-sky/30 bg-soft/50 shadow-inner">
-            {/* Ganti ikon ini dengan tag <img src={active.img} /> nanti jika sudah ada aset gambarnya */}
             <Canting className="h-16 w-16 text-ocean/40" />
             <p className="mt-4 font-mono text-xs uppercase tracking-widest text-ocean/60">
               Ilustrasi Proses
@@ -281,15 +291,13 @@ function Screen2({
         {/* Kolom Kanan: Sidebar SLA */}
         <aside
           className="flex flex-col gap-4 self-start rounded-3xl border border-ocean/30 p-6 text-soft shadow-sm"
-          style={{
-            backgroundImage:
-              "linear-gradient(180deg,#0a1931,#1a3d63 65%,#2f5b83)",
-          }}
+          style={{ backgroundImage: BRAND_GRADIENT }}
         >
           <div className="flex items-center gap-2">
             <DyeDrop className="h-4 w-3" color="#b3cfe5" />
             <p className="text-sky/80">Durasi Produksi</p>
           </div>
+
           <p className="font-display text-3xl leading-tight text-soft">
             {minDays} - {maxDays} Hari
           </p>
@@ -317,7 +325,9 @@ function Row({
 }) {
   return (
     <div
-      className={`flex items-center justify-between py-1.5 ${last ? "" : "border-b border-white/10"}`}
+      className={`flex items-center justify-between py-1.5 ${
+        last ? "" : "border-b border-white/10"
+      }`}
     >
       <span className="text-sky/60">{label}</span>
       <span className="text-soft">{value}</span>
@@ -332,35 +342,6 @@ function StepBtn({ onClick, label }: { onClick: () => void; label: string }) {
       className="flex h-12 w-12 items-center justify-center text-2xl text-deep transition-colors hover:text-ocean"
     >
       {label}
-    </button>
-  );
-}
-
-function StepDot({
-  n,
-  label,
-  active,
-  done,
-  onClick,
-}: {
-  n: string;
-  label: string;
-  active: boolean;
-  done: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button onClick={onClick} className="flex items-center gap-2 text-left">
-      <span
-        className={`hand-numeral text-2xl ${active ? "text-ocean" : done ? "text-[color:var(--color-ok)]" : "text-deep/35"}`}
-      >
-        {n}
-      </span>
-      <span
-        className={`${active ? "font-semibold text-navy" : "text-deep/55"}`}
-      >
-        {label}
-      </span>
     </button>
   );
 }

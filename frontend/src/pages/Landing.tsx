@@ -4,7 +4,6 @@ import {
   Canting,
   DyeDrop,
   ShieldIcon,
-  StageMark,
   Tag,
   UserIcon,
 } from '@/components/batik'
@@ -17,24 +16,6 @@ interface LandingProps {
   go: (page: Page) => void
 }
 
-const PILLARS = [
-  {
-    tag: 'Smart Commerce',
-    title: 'Harga jujur, stok pasti',
-    body: 'Pembeli menaikkan kuantitas, harga per lembar turun bertingkat dan estimasi selesai dihitung ulang seketika — tanpa tawar-menawar berlarut.',
-  },
-  {
-    tag: 'Digital Twin Sanggar',
-    title: 'Kapasitas nyata pembatik',
-    body: 'Setiap pesanan disimulasikan ke kapasitas asli tiap pembatik dan stok bahan, sehingga sanggar hanya menyanggupi yang benar-benar mampu dikerjakan.',
-  },
-  {
-    tag: 'Monitoring Optik AI',
-    title: 'Standar mutu & kepatuhan',
-    body: 'Pengawasan sensor optik stasiun kerja dan pencatatan kepatuhan otomatis menjaga keteraturan sanggar dan akurasi evaluasi harian.',
-  },
-]
-
 export const Landing: FC<LandingProps> = ({ go }) => {
   return (
     <main>
@@ -42,7 +23,7 @@ export const Landing: FC<LandingProps> = ({ go }) => {
       <section className="relative min-h-[calc(100vh-40px)] overflow-hidden bg-navy px-5 py-16 text-soft sm:px-8 sm:py-24">
         {/* Background Motif Pattern Overlay */}
         <div
-          className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-35"
+          className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-100"
           style={{
             backgroundImage: `linear-gradient(to bottom, rgba(10, 25, 47, 0.45), rgba(10, 25, 47, 0.9)), url(${bgPattern})`,
           }}
@@ -50,20 +31,18 @@ export const Landing: FC<LandingProps> = ({ go }) => {
 
         <div className="relative mx-auto max-w-[1000px]">
           {/* Eyebrow */}
-          <div className="flex items-center gap-2 text-sky/80">
-            <DyeDrop className="h-4 w-3" color="#b3cfe5" />
-            <span className="text-sm font-medium">Batik Tulis · Sanggar Pengrajin</span>
-          </div>
+          <div className="flex items-center gap-2 text-sky/80"></div>
 
           {/* Hero Title */}
-          <h1 className="mt-6 font-display text-4xl leading-[1.15] text-soft sm:text-6xl lg:text-7xl">
+          <h1 className="mt-6 font-display text-4xl leading-[1.15] text-soft sm:text-6xl lg:text-7xl group-hover:text-navy">
             TwinCraft
           </h1>
 
           <Canting className="mt-6 h-2.5 w-64 text-ocean/80" />
 
-          {/* Subtitle */}
-
+          <p className="mt-6 font-display text-2l leading-[1.6] text-soft sm:text-6l lg:text-9l">
+            TwinCraft adalah platform integrasi manufaktur cerdas berbasis Digital Twin dan AI yang dirancang khusus untuk melestarikan sekaligus memodernisasi industri batik tulis nusantara. Melalui pemodelan simulasi visual tahapan produksi, optimasi Bill of Materials (BoM) otomatis, serta pantauan sanggar terpadu, TwinCraft menghadirkan transparansi produksi bagi pembeli dan kendali efisiensi penuh bagi pemilik sanggar.
+          </p>
 
           {/* Action Cards untuk Tiga Peran */}
           <div className="mt-12 grid max-w-3xl gap-4 sm:grid-cols-3">
@@ -73,75 +52,48 @@ export const Landing: FC<LandingProps> = ({ go }) => {
               className="group flex flex-col justify-between rounded-3xl bg-soft p-6 text-left shadow-lg transition-all duration-200 hover:bg-white hover:shadow-xl"
             >
               <div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky/30 text-navy mb-4">
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-sky/30 text-navy">
                   <UserIcon className="h-5 w-5" />
                 </div>
-                <p className="font-display text-xl text-navy">Saya ingin memesan</p>
-                <p className="mt-1 text-xs text-deep/70">Masuk sebagai Pembeli</p>
+                <p className="font-display text-xl text-navy">Pembeli</p>
               </div>
-              <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-ocean group-hover:text-navy">
-                Laman Pembeli <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-navy group-hover:text-navy">
+                Masuk sebagai Pembeli <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </button>
 
             {/* Kartu Pembatik */}
             <button
               onClick={() => go('pembatik')}
-              className="group flex flex-col justify-between rounded-3xl border border-sky/20 bg-deep/40 p-6 text-left backdrop-blur transition-all duration-200 hover:border-sky/40 hover:bg-deep/60"
+              className="group flex flex-col justify-between rounded-3xl bg-soft p-6 text-left shadow-lg transition-all duration-200 hover:bg-white hover:shadow-xl"
             >
               <div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-sky mb-4">
-                  <DyeDrop className="h-5 w-4" color="#b3cfe5" />
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-sky/30 text-navy">
+                  <DyeDrop className="h-5 w-4" />
                 </div>
-                <p className="font-display text-xl text-soft">Staf pembatik</p>
-                <p className="mt-1 text-xs text-sky/70">Dashboard Meja Kerja</p>
+                <p className="font-display text-xl text-navy">Pembatik</p>
               </div>
-              <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-sky group-hover:text-soft">
-                Buka Dashboard <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-navy group-hover:text-navy">
+                Masuk sebagai Pembatik <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </button>
 
             {/* Kartu Pemilik Sanggar */}
             <button
               onClick={() => go('owner')}
-              className="group flex flex-col justify-between rounded-3xl border border-sky/20 bg-deep/40 p-6 text-left backdrop-blur transition-all duration-200 hover:border-sky/40 hover:bg-deep/60"
+              className="group flex flex-col justify-between rounded-3xl bg-soft p-6 text-left shadow-lg transition-all duration-200 hover:bg-white hover:shadow-xl"
             >
               <div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 text-sky mb-4">
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-sky/30 text-navy">
                   <ShieldIcon className="h-5 w-5" />
                 </div>
-                <p className="font-display text-xl text-soft">Pemilik sanggar</p>
-                <p className="mt-1 text-xs text-sky/70">Pusat Kendali & Kamera</p>
+                <p className="font-display text-xl text-navy">Pemilik Sanggar</p>
               </div>
-              <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-sky group-hover:text-soft">
-                Buka Dashboard <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+              <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-navy group-hover:text-navy">
+                Masuk sebagai Pemilik <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </button>
           </div>
-        </div>
-      </section>
-
-      {/* Tiga Pilar Section */}
-      <section className="mx-auto max-w-[1180px] px-5 py-16 sm:px-8 sm:py-24">
-        <StageMark
-          numeral="tiga"
-          title="Tiga pilar, satu jahitan"
-          sub="Detail penuh terbuka begitu Anda memilih peran — pembeli, staf pembatik, atau pemilik sanggar."
-        />
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-          {PILLARS.map((p, i) => (
-            <article
-              key={p.tag}
-              className="flex flex-col rounded-3xl border border-sky/60 bg-white p-6"
-            >
-              <span className="hand-numeral text-3xl text-ocean/60">{`0${i + 1}`}</span>
-              <div className="mt-3">
-                <Tag>{p.tag}</Tag>
-              </div>
-              <h3 className="mt-2 font-display text-2xl text-navy">{p.title}</h3>
-              <p className="mt-2 text-[15px] leading-relaxed text-deep/75">{p.body}</p>
-            </article>
-          ))}
         </div>
       </section>
 
@@ -151,7 +103,7 @@ export const Landing: FC<LandingProps> = ({ go }) => {
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <Tag>Ragam motif</Tag>
-              <h2 className="mt-2 font-display text-3xl text-navy">Tiga cerita yang bisa Anda pesan</h2>
+              <h2 className="mt-2 font-display text-3xl text-navy">Tiga motif yang bisa Anda pesan</h2>
             </div>
             <button
               onClick={() => go('customer')}

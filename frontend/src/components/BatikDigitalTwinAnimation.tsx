@@ -1,5 +1,5 @@
 import { useEffect, useState, type FC } from 'react'
-import { Canting, CheckIcon, ClockIcon, DyeDrop, StageMark, Tag } from './batik'
+import { Canting, CheckIcon, DyeDrop } from './batik'
 import dt1 from '@/assets/digitaltwin1.jpeg'
 import dt2 from '@/assets/digitaltwin2.jpeg'
 import dt3 from '@/assets/digitaltwin3.jpeg'
@@ -12,9 +12,8 @@ export interface StageInfo {
   description: string
   duration: string
   temperature?: string
-  tool: string
+  tool?: string
   cropCoords: {
-    // Koordinat crop persentase dari gambar 2x2 (digitaltwin2/4)
     x: number
     y: number
     w: number
@@ -30,50 +29,50 @@ export const DIGITAL_TWIN_STAGES: StageInfo[] = [
     subtitle: 'Tahap 1: Pengukuran panjang 2.4 meter & perataan serat',
     description:
       'Kain mori primissima dipotong presisi sesuai ukuran standar pesanan dan dicuci untuk menghilangkan kanji alami agar malam lilin dapat meresap sempurna.',
-    duration: '15 - 30 Menit',
+    duration: '30 Menit',
     tool: 'Gunting Kain Tradisional & Meteran Kayu',
-    cropCoords: { x: 0, y: 0, w: 50, h: 50 }, // Top-Left
+    cropCoords: { x: 0, y: 0, w: 50, h: 50 },
   },
   {
     id: 2,
-    name: 'Nyanting Motif Malam (Lilin Panas)',
+    name: 'Nyanting Motif Malam',
     subtitle: 'Tahap 2: Penggoresan garis klowong & isen-isen halus',
     description:
       'Pembatik menggoreskan lelehan lilin malam panas menggunakan canting tembaga nomor 2 secara bolak-balik agar pola tertutup rapat dari rembesan warna.',
-    duration: '2 - 3 Hari / Lembar',
+    duration: '2880 - 4320 Menit',
     temperature: '65° - 70°C (Suhu Wajan Malam)',
     tool: 'Canting Tulis Tembaga & Wajan Lilin Listrik',
-    cropCoords: { x: 50, y: 0, w: 50, h: 50 }, // Top-Right
+    cropCoords: { x: 50, y: 0, w: 50, h: 50 },
   },
   {
     id: 3,
-    name: 'Pencelupan Warna Alami (Indigo)',
+    name: 'Pencelupan Warna Alami',
     subtitle: 'Tahap 3: Perendaman fermentasi daun pasta Indigofera',
     description:
       'Kain yang telah dicanting dicelup berulang kali ke dalam bak fermentasi indigo alami untuk memperoleh kedalaman warna biru khas pesisir Aceh.',
-    duration: '4 - 6 Jam (3x Celup & Aerasi)',
+    duration: '240 - 360 Menit',
     temperature: 'Suhu Ruang (Fermentasi pH 9.5)',
     tool: 'Bak Celup Indigo Tradisional & Gawangan Kering',
-    cropCoords: { x: 0, y: 50, w: 50, h: 50 }, // Bottom-Left
+    cropCoords: { x: 0, y: 50, w: 50, h: 50 },
   },
   {
     id: 4,
-    name: 'Pelorodan Malam & Pemeriksaan Mutu',
+    name: 'Pelorodan & QC Mutu',
     subtitle: 'Tahap 4: Peluruhan lilin dengan air mendidih & QC',
     description:
       'Malam diluruhkan dalam kuali air panas mendidih dengan campuran soda abu alami, menyingkap kontras putih mori dan motif indigo yang tajam.',
     duration: '45 Menit',
     temperature: '90° - 95°C (Kuali Air Panas)',
     tool: 'Kuali Pelorodan Tembaga & Bilasan Air Bersih',
-    cropCoords: { x: 50, y: 50, w: 50, h: 50 }, // Bottom-Right
+    cropCoords: { x: 50, y: 50, w: 50, h: 50 },
   },
   {
     id: 5,
-    name: 'Kain Jadi & Siap Pengiriman',
+    name: 'Pengemasan & Pengiriman',
     subtitle: 'Tahap 5: Pelipatan rapi, sertifikasi keaslian, & kemasan',
     description:
       'Kain batik tulis selesai melalui seluruh tahapan dengan mutu sempurna, dilipat rapi, dan siap dikirimkan kepada pembeli.',
-    duration: 'Selesai & Lolos QC',
+    duration: '30 Menit',
     tool: 'Kemasan Kotak Sanggar & Sertifikat Keaslian',
     cropCoords: { x: 0, y: 0, w: 100, h: 100 },
     isFinal: true,
@@ -90,7 +89,7 @@ interface BatikDigitalTwinAnimationProps {
 
 export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
   initialStage = 2,
-  autoPlayInterval = 4000,
+  autoPlayInterval = 60000,
   compact = false,
   showControls = true,
   onStageChange,
@@ -104,7 +103,6 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
   const stage =
     DIGITAL_TWIN_STAGES.find((s) => s.id === currentStageId) || DIGITAL_TWIN_STAGES[0]
 
-  // Otomatis berpindah tahap saat Auto-Play aktif
   useEffect(() => {
     if (!isPlaying) return
 
@@ -137,18 +135,9 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
       {/* Header Visualizer */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-sky/30 pb-5">
         <div>
-          <div className="flex items-center gap-2">
-            <DyeDrop className="h-4 w-3" />
-            <span className="text-xs font-bold uppercase tracking-wider text-ocean">
-              Animasi Digital Twin Proses Batik Tulis
-            </span>
-          </div>
           <h3 className="mt-1 font-display text-2xl sm:text-3xl text-navy">
             Simulasi Tahapan Karya Pengrajin
           </h3>
-          <p className="text-xs text-deep/70 mt-0.5">
-            Konsep ilustrasi Digital Twin menelusuri tiap fase pembuatan batik dari mori mentah hingga kain jadi.
-          </p>
         </div>
 
         {/* Kontrol Mode Tampilan & Pola */}
@@ -173,7 +162,7 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
         </div>
       </div>
 
-      {/* Navigasi Tahap 1 s/d 5 (Scrubber Interaktif) */}
+      {/* Navigasi Tahap 1 s/d 5 */}
       <div className="mt-6">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
           {DIGITAL_TWIN_STAGES.map((s) => {
@@ -184,7 +173,7 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
               <button
                 key={s.id}
                 onClick={() => selectStage(s.id)}
-                className={`flex flex-col rounded-2xl border p-3 text-left transition-all ${
+                className={`flex flex-col justify-between rounded-2xl border p-3 text-left transition-all ${
                   isActive
                     ? 'border-ocean bg-ocean/10 shadow-sm ring-2 ring-ocean/30'
                     : isCompleted
@@ -205,16 +194,18 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
                     </span>
                   )}
                 </div>
-                <p
-                  className={`mt-2 font-display text-sm font-semibold truncate ${
-                    isActive ? 'text-navy' : 'text-deep/80'
-                  }`}
-                >
-                  {s.name.split(' ')[0]} {s.name.split(' ')[1] || ''}
-                </p>
-                <p className="text-[10px] text-deep/60 truncate font-mono mt-0.5">
-                  {s.duration.split(' ')[0]} {s.duration.split(' ')[1] || ''}
-                </p>
+                <div className="mt-2 space-y-1">
+                  <p
+                    className={`font-display text-xs font-semibold leading-snug ${
+                      isActive ? 'text-navy' : 'text-deep/80'
+                    }`}
+                  >
+                    {s.name}
+                  </p>
+                  <p className="text-[11px] font-mono text-deep/60 leading-tight">
+                    {s.duration}
+                  </p>
+                </div>
               </button>
             )
           })}
@@ -231,12 +222,10 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
 
       {/* Konten Utama Animasi Digital Twin */}
       {viewMode === 'focused' ? (
-        /* TAMPILAN TERFOKUS DENGAN CROP FOKUS TAHAP */
         <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1.1fr_1fr] items-center">
           {/* Ilustrasi Frame Digital Twin */}
           <div className="relative aspect-square max-w-[440px] mx-auto w-full overflow-hidden rounded-3xl border-2 border-sky/70 bg-white p-4 shadow-sm flex items-center justify-center">
             {stage.isFinal ? (
-              /* Tahap 5: Gambar Digital Twin 1 / 3 (Thumbs Up & Lipatan Kain) */
               <div className="relative h-full w-full overflow-hidden rounded-2xl flex items-center justify-center">
                 <img
                   src={showPatterned ? dt3 : dt1}
@@ -248,7 +237,6 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
                 </div>
               </div>
             ) : (
-              /* Tahap 1 - 4: Crop quadrant dari gambar 2x2 (digitaltwin2/4) */
               <div className="relative h-full w-full overflow-hidden rounded-2xl bg-white flex items-center justify-center">
                 <div
                   className="absolute h-[200%] w-[200%] transition-all duration-500 ease-out"
@@ -262,11 +250,6 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
                     alt={stage.name}
                     className="h-full w-full object-contain"
                   />
-                </div>
-
-                {/* Badge Penanda Tahap di Gambar */}
-                <div className="absolute bottom-2 left-2 rounded-xl bg-navy/85 px-3 py-1 font-mono text-[11px] text-soft shadow backdrop-blur">
-                  Tahap 0{stage.id} · {stage.name}
                 </div>
               </div>
             )}
@@ -297,16 +280,18 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
               {stage.description}
             </p>
 
-            {/* Parameter Teknis Digital Twin */}
+            {/* Parameter Teknis */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-2xl border border-sky/40 bg-soft p-4 text-xs font-mono text-deep">
               <div>
                 <span className="text-deep/50 block">Estimasi Durasi:</span>
                 <span className="font-bold text-navy">{stage.duration}</span>
               </div>
-              <div>
-                <span className="text-deep/50 block">Alat Utama:</span>
-                <span className="font-semibold text-ocean">{stage.tool}</span>
-              </div>
+              {stage.tool && (
+                <div>
+                  <span className="text-deep/50 block">Alat Utama:</span>
+                  <span className="font-semibold text-ocean">{stage.tool}</span>
+                </div>
+              )}
               {stage.temperature && (
                 <div className="sm:col-span-2 border-t border-sky/30 pt-2">
                   <span className="text-deep/50 block">Suhu Operasional:</span>
@@ -317,7 +302,7 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
               )}
             </div>
 
-            {/* Tombol Play/Pause & Navigasi */}
+            {/* Tombol Kontrol */}
             {showControls && (
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
@@ -342,10 +327,8 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
           </div>
         </div>
       ) : (
-        /* TAMPILAN SEMUA TAHAP (GRID COMPARISON) */
         <div className="mt-8 space-y-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {/* Kartu 1: Gambar 4 Tahap Proses */}
             <div className="rounded-3xl border border-sky/60 bg-soft p-5">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-display text-lg text-navy">
@@ -370,7 +353,6 @@ export const BatikDigitalTwinAnimation: FC<BatikDigitalTwinAnimationProps> = ({
               </div>
             </div>
 
-            {/* Kartu 2: Gambar Hasil Selesai & QC */}
             <div className="rounded-3xl border border-sky/60 bg-soft p-5">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="font-display text-lg text-navy">

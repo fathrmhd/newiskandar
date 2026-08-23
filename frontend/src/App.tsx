@@ -18,8 +18,8 @@ export type Page = 'landing' | 'customer' | 'pembatik' | 'owner' | 'auth'
 const NAV_ITEMS: { id: Page; label: string; roleReq?: UserRole }[] = [
   { id: 'landing', label: 'Beranda' },
   { id: 'customer', label: 'Pembeli' },
-  { id: 'pembatik', label: 'Dashboard Pembatik' },
-  { id: 'owner', label: 'Dashboard Pemilik' },
+  { id: 'pembatik', label: 'Pembatik' },
+  { id: 'owner', label: 'Pemilik' },
 ]
 
 export default function App() {

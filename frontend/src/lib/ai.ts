@@ -5,29 +5,26 @@
 
 export const TODAY = new Date('2026-08-16T08:00:00')
 export const READY_STOCK = 9 // lembar batik siap etalase
+import burungHongImg from '@/assets/burunghong.jpeg'
+import bungaMekarImg from '@/assets/bungamekar.jpeg'
+import sekarJagadImg from '@/assets/sekarjagad.jpeg'
 
 // Katalog motif — Smart Commerce.
 export const MOTIFS = [
   {
-    id: 'awan',
-    name: 'Awan Meucanek',
-    sku: 'BTK-AC-014',
-    note: 'motif awan berarak khas pesisir Aceh',
-    img: 'https://images.unsplash.com/photo-1761516659497-8478e39d2b26?w=700&h=800&fit=crop&auto=format',
+    id: 'burung',
+    name: 'Motif Burung Hong',
+    img: burungHongImg,
   },
   {
-    id: 'pinto',
-    name: 'Pinto Aceh',
-    sku: 'BTK-AC-021',
-    note: 'gerbang berukir, simbol kehormatan',
-    img: 'https://images.unsplash.com/photo-1604973104381-870c92f10343?w=700&h=800&fit=crop&auto=format',
+    id: 'bunga',
+    name: 'Motif Bunga Mekar',
+    img: bungaMekarImg,
   },
   {
-    id: 'pucok',
-    name: 'Pucok Rebung',
-    sku: 'BTK-AC-033',
-    note: 'tunas bambu, lambang tumbuh & harapan',
-    img: 'https://images.unsplash.com/photo-1761516659539-20ec6f407ca4?w=700&h=800&fit=crop&auto=format',
+    id: 'sekar',
+    name: 'Motif Sekar Jagad',
+    img: sekarJagadImg,
   },
 ]
 
@@ -86,7 +83,7 @@ export const DEFAULT_WORKERS: Worker[] = [
   {
     id: 'w1',
     name: 'Bu Nuraini',
-    skill: 'Batik tulis halus (Pinto Aceh)',
+    skill: 'Pemotongan',
     rate: 0.9,
     stationId: 'st-1',
     status: 'active',
@@ -188,7 +185,7 @@ export const WORKSTATIONS: Workstation[] = [
     ipCamera: 'rtsp://cam-central.sanggar.local:554/live?zone=canting',
     fps: 30,
     resolution: '1920x1080 (HD)',
-    currentActivity: 'Mencanting Garis Isen-isen (Pinto Aceh)',
+    currentActivity: 'Mencanting Garis Isen-isen ( Aceh)',
     complianceRate: 98.2,
     idleSeconds: 0,
     status: 'active',
@@ -277,7 +274,7 @@ export const INITIAL_AUDIT_LOGS: AuditLog[] = [
     location: 'Meja Canting Utama',
     severity: 'low',
     status: 'logged',
-    note: 'Pengrajin Bu Nuraini menyelesaikan kain motif Pinto Aceh tahap 1 (isian isen-isen lengkap).',
+    note: 'Pengrajin Bu Nuraini menyelesaikan kain motif  Aceh tahap 1 (isian isen-isen lengkap).',
   },
   {
     id: 'log-02',
@@ -356,7 +353,7 @@ export const INITIAL_AUDIT_LOGS: AuditLog[] = [
     location: 'Meja Canting Utama',
     severity: 'low',
     status: 'resolved',
-    note: 'Pengrajin Bu Nuraini tiba di sanggar dan memulai mencanting pola Pinto Aceh.',
+    note: 'Pengrajin Bu Nuraini tiba di sanggar dan memulai mencanting pola  Aceh.',
   },
 ]
 

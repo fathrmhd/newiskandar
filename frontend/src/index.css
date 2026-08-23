@@ -9,7 +9,6 @@
   --color-ocean: #4a7fa7;
   --color-sky: #b3cfe5;
   --color-soft: #f6fafd;
-  /* Status warna sebagai warna celup alami, bukan neon SaaS */
   --color-ok: #4c8f6b;
   --color-warn: #c0873a;
   --color-danger: #b0533f;
@@ -35,14 +34,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Judul memakai Fraunces dengan sedikit ketidaksempurnaan (SOFT/WONK) — meniru guratan canting */
 .font-display {
   font-family: var(--font-display);
   font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 1;
   letter-spacing: -0.01em;
 }
 
-/* Angka tahap ditulis "tangan": Fraunces italic, bukan mono uppercase tracking lebar */
 .hand-numeral {
   font-family: var(--font-display);
   font-variation-settings: 'opsz' 40, 'SOFT' 80, 'WONK' 1;

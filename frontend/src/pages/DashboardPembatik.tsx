@@ -45,15 +45,16 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
               <span className="text-xs font-bold uppercase tracking-wider text-ocean">
                 Dashboard Kerja Pengrajin
               </span>
-              <span className="rounded-full bg-[color:var(--color-ok)]/15 px-2 py-0.5 font-mono text-[11px] font-semibold text-[color:var(--color-ok)]">
-                Sistem Pencatatan Waktu Terpadu
-              </span>
+        
             </div>
             <h1 className="font-display text-2xl text-navy sm:text-3xl">
               {worker.name}
             </h1>
             <p className="text-xs text-deep/70">
               Keahlian: {worker.skill.replace('Aceh', 'Klasik')}
+            </p>
+            <p className="text-xs text-deep/70">
+              Skor Kepatuhan : 100%
             </p>
           </div>
         </div>
@@ -76,16 +77,13 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
         
         {/* Kolom 1: Pencatatan Waktu Per Produk & Evaluasi */}
         <div className="space-y-6">
-          <StageMark
-            numeral="satu"
+          <StageMark  
             title="Durasi Kerja"
-            sub="Fokus pada penyelesaian target, hak istirahat tetap dihitung sebagai bagian dari durasi SLA."
           />
 
           <div className="rounded-3xl border border-sky/60 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between border-b border-sky/30 pb-4">
               <Tag>Kinerja Pengerjaan 1 Produk</Tag>
-              <span className="text-xs font-mono font-semibold text-ocean">Motif: Parang Rusak / Kawung</span>
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-4">
@@ -94,7 +92,7 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
                 <p className="font-display text-3xl text-navy">{productionTime.activeMinutes} <span className="text-sm font-sans text-deep/60">Menit</span></p>
               </div>
               <div className="rounded-2xl bg-soft p-4 border border-sky/30">
-                <p className="text-xs text-deep/60 mb-1">Waktu Izin / Istirahat</p>
+                <p className="text-xs text-deep/60 mb-1">Idle Time</p>
                 <p className="font-display text-3xl text-navy">{productionTime.breakMinutes} <span className="text-sm font-sans text-deep/60">Menit</span></p>
               </div>
             </div>
@@ -119,11 +117,14 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
             </div>
             <div>
               <h3 className={`font-display text-xl ${isTargetMet ? 'text-[color:var(--color-ok)]' : 'text-navy'}`}>
-                {isTargetMet ? 'Target Tercapai — Syarat Reward Terpenuhi!' : 'Fokus Penyelesaian Target'}
+                {isTargetMet ? 'Target Tercapai' : 'Fokus Penyelesaian Target'}
+              </h3>
+              <h3 className={`font-display text-xl ${isTargetMet ? 'text-[color:var(--color-ok)]' : 'text-navy'}`}>
+                {isTargetMet ? 'Anda Mendapat Reward!' : 'Fokus Penyelesaian Target'}
               </h3>
               <p className="mt-1 text-sm text-deep/75">
                 {isTargetMet 
-                  ? 'Kinerja Anda sangat baik. Waktu istirahat Anda tidak mengurangi penilaian performa. Reward akan diakumulasikan ke insentif akhir pekan.' 
+                  ? 'Kinerja Anda sangat baik. Waktu istirahat anda tidak mengurangi waktu produksi. Reward-nya bakal digabung ke insentif akhir pekan, ya.' 
                   : 'Selesaikan produk sesuai rentang durasi ideal untuk mengaktifkan insentif reward.'}
               </p>
             </div>
@@ -149,7 +150,7 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
                 </>
               ) : (
                 <>
-                  <li>Persiapan alat dan bahan baku sesuai takaran stasiun <strong>{currentStation}</strong>.</li>
+                  <li>Persiapan alat dan bahan baku sesuai takaran stasiun meja kerja.</li>
                   <li>Pengerjaan dilakukan tanpa merusak integritas kain mori.</li>
                   <li>Pembersihan area kerja setelah satu *batch* selesai.</li>
                 </>
@@ -158,31 +159,7 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
           </div>
 
           {/* Status Kepatuhan & Manajemen SDM */}
-          <div
-            className="rounded-3xl border border-ocean/30 p-6 text-soft shadow-sm"
-            style={{ backgroundImage: 'linear-gradient(180deg,#0a1931,#1a3d63 65%,#2f5b83)' }}
-          >
-            <Tag invert>Kepatuhan & Efektivitas</Tag>
-            <p className="mt-2 font-display text-2xl leading-tight">
-              Kinerja Optimal
-            </p>
-            <div className="mt-4 grid grid-cols-2 gap-4 border-t border-white/15 pt-4 font-mono text-sm text-sky/85">
-              <div>
-                <span className="text-sky/60 block mb-1">Skor Kepatuhan</span>
-                <span className="text-xl text-[color:var(--color-ok)] font-semibold">100%</span>
-              </div>
-              <div>
-                <span className="text-sky/60 block mb-1">Status Insentif</span>
-                <span className="text-white">Aktif</span>
-              </div>
-              <div className="col-span-2">
-                <span className="text-sky/60 block mb-1">Catatan Manajemen SDM</span>
-                <span className="text-xs leading-relaxed opacity-90">
-                  Waktu istirahat yang diambil masuk ke dalam batas toleransi SLA. Hak pekerja terpenuhi tanpa mengurangi skor akhir.
-                </span>
-              </div>
-            </div>
-          </div>
+      
 
         </div>
       </div>
