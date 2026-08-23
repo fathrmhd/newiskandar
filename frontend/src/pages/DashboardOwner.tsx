@@ -398,7 +398,6 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
 
           <section className="border-t border-sky/40 pt-10">
             <StageMark
-              numeral="dua"
               title="Kinerja SDM & Hak Pekerja"
               sub="Evaluasi berfokus pada penyelesaian tugas. Waktu izin dan istirahat dihormati sebagai hak pekerja."
             />
@@ -416,9 +415,6 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
                     <div className="flex items-center justify-between">
                       <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[color:var(--color-ok)]/20 text-deep">
                         <UserIcon className="h-4 w-4" />
-                      </span>
-                      <span className="flex items-center gap-1 font-mono text-xs font-bold text-[color:var(--color-ok)]">
-                        <CheckIcon className="h-3.5 w-3.5" /> 100% Kinerja
                       </span>
                     </div>
                     <div>
