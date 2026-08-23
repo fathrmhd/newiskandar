@@ -17,7 +17,57 @@ import {
   shortDate,
 } from "@/lib/ai";
 
+import dt1 from "@/assets/digitaltwin1.jpeg";
+import dt2 from "@/assets/digitaltwin2.jpeg";
+import dt3 from "@/assets/digitaltwin3.jpeg";
+import dt4 from "@/assets/digitaltwin4.jpeg";
+
 const BRAND_GRADIENT = "linear-gradient(180deg,#0a1931,#1a3d63 60%,#2f5b83)";
+
+export interface StageInfo {
+  id: number;
+  name: string;
+  subtitle: string;
+  description: string;
+  duration: string;
+  temperature?: string;
+  tool?: string;
+  cropCoords: {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+  };
+  isFinal?: boolean;
+}
+
+export const DIGITAL_TWIN_STAGES: StageInfo[] = [
+  {
+    id: 1,
+    name: "Pemotongan",
+    cropCoords: { x: 6, y: 8, w: 50, h: 50 },
+  },
+  {
+    id: 2,
+    name: "Nyanting Motif Malam",
+    cropCoords: { x: 49, y: 0, w: 50, h: 50 },
+  },
+  {
+    id: 3,
+    name: "Pencelupan",
+    cropCoords: { x: 0, y: 50, w: 50, h: 50 },
+  },
+  {
+    id: 4,
+    name: "Pelorodan & QC Mutu",
+    cropCoords: { x: 50, y: 50, w: 50, h: 50 },
+  },
+  {
+    id: 5,
+    name: "Pengiriman",
+    isFinal: true,
+  },
+];
 
 export default function Customer() {
   const [step, setStep] = useState<1 | 2>(1);
@@ -29,10 +79,6 @@ export default function Customer() {
 
   return (
     <main className="mx-auto max-w-[1180px] px-5 pb-24 pt-10 sm:px-8">
-      <div className="mb-8 flex items-center gap-4 text-[15px]">
-        <Canting className="h-2 w-16 text-sky" />
-      </div>
-
       {step === 1 ? (
         <Screen1
           motif={motif}
@@ -119,9 +165,7 @@ function Screen1({
         </div>
 
         <div className="mt-8">
-          <StageMark
-            title="Atur jumlah pesanan"
-          />
+          <StageMark title="Atur jumlah pesanan" />
 
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center rounded-2xl border border-sky/70 bg-white">
@@ -243,54 +287,99 @@ function Screen2({
   ai: ReturnType<typeof computeAI>;
   onBack: () => void;
 }) {
-  const activeIndex = 1;
-  const active = BATIK_STAGES[activeIndex];
+  // Tahap aktif yang sedang dikerjakan pembatik (Tahap 3: Celup Indigo)
+  const currentStage = DIGITAL_TWIN_STAGES[0] ?? DIGITAL_TWIN_STAGES[0];
 
   const minDays = Math.max(1, Math.ceil(ai.totalDays));
   const maxDays = minDays + 3;
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <div>
         <button
           onClick={onBack}
-          className="text-sm font-semibold text-ocean hover:text-deep transition-colors"
+          className="text-sm font-semibold text-ocean transition-colors hover:text-deep"
         >
           ← Kembali
         </button>
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
-        {/* Kolom Kiri: UI Terfokus pada SATU Tahap Saja */}
-        <div className="flex flex-col items-center justify-center rounded-3xl border border-sky/60 bg-white p-8 sm:p-12 text-center shadow-sm">
-          <span className="mb-6 flex items-center gap-2 rounded-full bg-[color:var(--color-ok)]/15 px-4 py-2 font-mono text-sm font-semibold text-[color:var(--color-ok)]">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--color-ok)] opacity-75"></span>
-              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[color:var(--color-ok)]"></span>
+        {/* Kolom Kiri: Satu Proses Tunggal Digital Twin */}
+        <div className="rounded-3xl border border-sky/60 bg-white p-6 sm:p-8 shadow-sm">
+          <div className="mb-6 flex">
+            <span className="flex items-center gap-2 rounded-full bg-[color:var(--color-ok)]/15 px-4 py-1.5 font-mono text-xs font-semibold text-[color:var(--color-ok)]">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--color-ok)] opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--color-ok)]" />
+              </span>
+              Sedang Diproses
             </span>
-            Sedang Diproses
-          </span>
+          </div>
 
-          <h2 className="font-display text-4xl text-navy sm:text-5xl">
-            {active.name}
-          </h2>
+          <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[1fr_1.2fr]">
+            {/* Visual Crop Digital Twin */}
+            <div className="relative aspect-square w-full max-w-[320px] mx-auto overflow-hidden rounded-3xl border-2 border-sky/70 bg-white p-3 shadow-sm flex items-center justify-center">
+              {currentStage.isFinal ? (
+                <div className="relative h-full w-full overflow-hidden rounded-2xl flex items-center justify-center">
+                  <img
+                    src={dt3}
+                    alt={currentStage.name}
+                    className="h-full w-full object-contain"
+                  />
+                  <div className="absolute bottom-2 left-2 rounded-xl bg-navy/80 px-2.5 py-1 text-[11px] font-mono text-soft backdrop-blur">
+                    Batik Tulis Selesai
+                  </div>
+                </div>
+              ) : (
+                <div className="relative h-full w-full overflow-hidden rounded-2xl bg-white flex items-center justify-center">
+                  <div
+                    className="absolute h-[200%] w-[200%] transition-all duration-500 ease-out"
+                    style={{
+                      left: `${-currentStage.cropCoords.x * 2}%`,
+                      top: `${-currentStage.cropCoords.y * 2}%`,
+                    }}
+                  >
+                    <img
+                      src={dt4}
+                      alt={currentStage.name}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+                </div>
+              )}
 
-          <p className="mt-4 max-w-md text-base leading-relaxed text-deep/70">
-            {active.note}
-          </p>
+              {/* Retikel Sudut */}
+              <div className="pointer-events-none absolute left-3 top-3 h-3 w-3 border-l-2 border-t-2 border-ocean/40" />
+              <div className="pointer-events-none absolute right-3 top-3 h-3 w-3 border-r-2 border-t-2 border-ocean/40" />
+              <div className="pointer-events-none absolute bottom-3 left-3 h-3 w-3 border-b-2 border-l-2 border-ocean/40" />
+              <div className="pointer-events-none absolute bottom-3 right-3 h-3 w-3 border-b-2 border-r-2 border-ocean/40" />
+            </div>
 
-          {/* Kotak Ilustrasi Tunggal */}
-          <div className="mt-10 flex h-48 w-full max-w-sm flex-col items-center justify-center rounded-2xl border border-sky/30 bg-soft/50 shadow-inner">
-            <Canting className="h-16 w-16 text-ocean/40" />
-            <p className="mt-4 font-mono text-xs uppercase tracking-widest text-ocean/60">
-              Ilustrasi Proses
-            </p>
+            {/* Rincian Deskripsi Proses */}
+            <div className="space-y-4">
+              <div>
+                <span className="font-mono text-xs font-bold uppercase tracking-wider text-ocean">
+                  Tahap 0{currentStage.id}
+                </span>
+                <h3 className="mt-1 font-display text-2xl sm:text-3xl text-navy">
+                  {currentStage.name}
+                </h3>
+                <p className="mt-1 text-xs sm:text-sm font-medium text-ocean">
+                  {currentStage.subtitle}
+                </p>
+              </div>
+
+              <p className="text-xs sm:text-sm leading-relaxed text-deep/80">
+                {currentStage.description}
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Kolom Kanan: Sidebar SLA */}
+        {/* Kolom Kanan: Durasi & Ringkasan SLA */}
         <aside
-          className="flex flex-col gap-4 self-start rounded-3xl border border-ocean/30 p-6 text-soft shadow-sm"
+          className="flex flex-col gap-4 self-start rounded-3xl border border-ocean/30 p-6 text-soft shadow-sm w-full"
           style={{ backgroundImage: BRAND_GRADIENT }}
         >
           <div className="flex items-center gap-2">
@@ -304,7 +393,9 @@ function Screen2({
 
           <div className="mt-2 rounded-2xl bg-white/10 p-4 font-mono text-[13px] text-sky/85">
             <Row label="Pesanan diterima" value={shortDate(new Date())} />
-            <Row label="Status" value={active.name} last />
+            <Row label="Motif" value={chosen.name} />
+            <Row label="Jumlah" value={`${qty} lembar`} />
+            <Row label="Status Saat Ini" value={currentStage.name} last />
           </div>
         </aside>
       </div>

@@ -1,4 +1,4 @@
-import type { FC } from 'react'
+import type { FC } from "react";
 import {
   ArrowRight,
   Canting,
@@ -6,14 +6,15 @@ import {
   ShieldIcon,
   Tag,
   UserIcon,
-} from '@/components/batik'
-import bgPattern from '@/assets/background.svg'
-import { MOTIFS } from '@/lib/ai'
+} from "@/components/batik";
+import bgPattern from "@/assets/background.svg";
+import { MOTIFS } from "@/lib/ai";
+import logo from "@/assets/logo.svg";
 
-type Page = 'landing' | 'customer' | 'pembatik' | 'owner' | 'auth'
+type Page = "landing" | "customer" | "pembatik" | "owner" | "auth";
 
 interface LandingProps {
-  go: (page: Page) => void
+  go: (page: Page) => void;
 }
 
 export const Landing: FC<LandingProps> = ({ go }) => {
@@ -33,22 +34,30 @@ export const Landing: FC<LandingProps> = ({ go }) => {
           {/* Eyebrow */}
           <div className="flex items-center gap-2 text-sky/80"></div>
 
-          {/* Hero Title */}
-          <h1 className="mt-6 font-display text-4xl leading-[1.15] text-soft sm:text-6xl lg:text-7xl group-hover:text-navy">
-            TwinCraft
-          </h1>
+          {/* Hero Logo */}
+          <div className="-ml-10 flex h-23 w-[520px] items-center overflow-hidden">
+            <img
+              src={logo}
+              alt="TwinCraft"
+              className="h-full w-full object-contain scale-650"
+            />
+          </div>
 
-          <Canting className="mt-6 h-2.5 w-64 text-ocean/80" />
-
-          <p className="mt-6 font-display text-2l leading-[1.6] text-soft sm:text-6l lg:text-9l">
-            TwinCraft adalah platform integrasi manufaktur cerdas berbasis Digital Twin dan AI yang dirancang khusus untuk melestarikan sekaligus memodernisasi industri batik tulis nusantara. Melalui pemodelan simulasi visual tahapan produksi, optimasi Bill of Materials (BoM) otomatis, serta pantauan sanggar terpadu, TwinCraft menghadirkan transparansi produksi bagi pembeli dan kendali efisiensi penuh bagi pemilik sanggar.
+          <p className="mt-6 max-w-4xl text-base sm:text-lg leading-relaxed text-sky/90 text-justify sm:text-left">
+            TwinCraft adalah platform integrasi manufaktur cerdas berbasis
+            Digital Twin dan AI yang dirancang khusus untuk melestarikan
+            sekaligus memodernisasi industri batik tulis nusantara. Melalui
+            pemodelan simulasi visual tahapan produksi, optimasi Bill of
+            Materials (BoM) otomatis, serta pantauan sanggar terpadu, TwinCraft
+            menghadirkan transparansi produksi bagi pembeli dan kendali
+            efisiensi penuh bagi pemilik sanggar.
           </p>
 
           {/* Action Cards untuk Tiga Peran */}
-          <div className="mt-12 grid max-w-3xl gap-4 sm:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
             {/* Kartu Pembeli */}
             <button
-              onClick={() => go('customer')}
+              onClick={() => go("customer")}
               className="group flex flex-col justify-between rounded-3xl bg-soft p-6 text-left shadow-lg transition-all duration-200 hover:bg-white hover:shadow-xl"
             >
               <div>
@@ -58,39 +67,44 @@ export const Landing: FC<LandingProps> = ({ go }) => {
                 <p className="font-display text-xl text-navy">Pembeli</p>
               </div>
               <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-navy group-hover:text-navy">
-                Masuk sebagai Pembeli <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                Masuk sebagai Pembeli{" "}
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </button>
 
             {/* Kartu Pembatik */}
             <button
-              onClick={() => go('pembatik')}
+              onClick={() => go("pembatik")}
               className="group flex flex-col justify-between rounded-3xl bg-soft p-6 text-left shadow-lg transition-all duration-200 hover:bg-white hover:shadow-xl"
             >
               <div>
                 <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-sky/30 text-navy">
-                  <DyeDrop className="h-5 w-4" />
+                  <UserIcon className="h-5 w-5" />
                 </div>
                 <p className="font-display text-xl text-navy">Pembatik</p>
               </div>
               <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-navy group-hover:text-navy">
-                Masuk sebagai Pembatik <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                Masuk sebagai Pembatik{" "}
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </button>
 
             {/* Kartu Pemilik Sanggar */}
             <button
-              onClick={() => go('owner')}
+              onClick={() => go("owner")}
               className="group flex flex-col justify-between rounded-3xl bg-soft p-6 text-left shadow-lg transition-all duration-200 hover:bg-white hover:shadow-xl"
             >
               <div>
                 <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-sky/30 text-navy">
-                  <ShieldIcon className="h-5 w-5" />
+                  <UserIcon className="h-5 w-5" />
                 </div>
-                <p className="font-display text-xl text-navy">Pemilik Sanggar</p>
+                <p className="font-display text-xl text-navy">
+                  Pemilik Sanggar
+                </p>
               </div>
               <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-navy group-hover:text-navy">
-                Masuk sebagai Pemilik <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                Masuk sebagai Pemilik{" "}
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </button>
           </div>
@@ -103,10 +117,12 @@ export const Landing: FC<LandingProps> = ({ go }) => {
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <Tag>Ragam motif</Tag>
-              <h2 className="mt-2 font-display text-3xl text-navy">Tiga motif yang bisa Anda pesan</h2>
+              <h2 className="mt-2 font-display text-3xl text-navy">
+                Tiga motif yang bisa Anda pesan
+              </h2>
             </div>
             <button
-              onClick={() => go('customer')}
+              onClick={() => go("customer")}
               className="group flex items-center gap-2 text-sm font-semibold text-ocean hover:text-deep"
             >
               <span>Lihat katalog</span>
@@ -115,8 +131,15 @@ export const Landing: FC<LandingProps> = ({ go }) => {
           </div>
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
             {MOTIFS.map((m) => (
-              <figure key={m.id} className="overflow-hidden rounded-3xl border border-sky/60 bg-[#d9cdb6]">
-                <img src={m.img} alt={`Batik motif ${m.name}`} className="h-56 w-full object-cover" />
+              <figure
+                key={m.id}
+                className="overflow-hidden rounded-3xl border border-sky/60 bg-[#d9cdb6]"
+              >
+                <img
+                  src={m.img}
+                  alt={`Batik motif ${m.name}`}
+                  className="h-56 w-full object-cover"
+                />
                 <figcaption className="bg-white px-4 py-3">
                   <p className="font-display text-lg text-navy">{m.name}</p>
                   <p className="text-sm text-deep/70">{m.note}</p>
@@ -127,7 +150,7 @@ export const Landing: FC<LandingProps> = ({ go }) => {
         </div>
       </section>
     </main>
-  )
-}
+  );
+};
 
-export default Landing
+export default Landing;

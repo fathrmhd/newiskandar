@@ -21,28 +21,13 @@ export function Canting({
   )
 }
 
-/* Setetes pewarna celup — penanda proses batik, pengganti eyebrow generik. */
-export function DyeDrop({
-  className = '',
-  color = '#4a7fa7',
-}: {
-  className?: string
-  color?: string
-}) {
-  return (
-    <svg viewBox="0 0 16 22" className={className} aria-hidden="true">
-      <path
-        d="M8 1C8 1 1.5 9 1.5 14.5A6.5 6.5 0 0 0 14.5 14.5C14.5 9 8 1 8 1Z"
-        fill={color}
-        opacity="0.9"
-      />
-    </svg>
-  )
+/* Dimatikan (return null) agar lambang air hilang total di seluruh project */
+export function DyeDrop(_props: { className?: string; color?: string }) {
+  return null
 }
 
 /*
- * Penanda tahap — treatment personal, BUKAN "TAHAP X · JUDUL" uppercase mono.
- * Angka ditulis tangan (Fraunces italic) di samping judul, ditemani tetes celup.
+ * Penanda tahap tanpa tetes air
  */
 export function StageMark({
   numeral,
@@ -68,7 +53,6 @@ export function StageMark({
       )}
       <div className="min-w-0">
         <div className="flex items-center gap-2">
-          <DyeDrop className="h-4 w-3" color={invert ? '#b3cfe5' : '#4a7fa7'} />
           <h2 className={`font-display text-2xl sm:text-3xl ${invert ? 'text-soft' : 'text-navy'}`}>
             {title}
           </h2>
@@ -85,15 +69,14 @@ export function StageMark({
   )
 }
 
-/* Label kecil non-generik: sentence case, tracking normal, dengan tetes celup. */
+/* Label kecil tanpa lambang tetes air */
 export function Tag({ children, invert = false }: { children: ReactNode; invert?: boolean }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-sm font-semibold ${
+      className={`inline-flex items-center text-sm font-semibold ${
         invert ? 'text-sky' : 'text-ocean'
       }`}
     >
-      <DyeDrop className="h-3.5 w-2.5" color={invert ? '#b3cfe5' : '#4a7fa7'} />
       {children}
     </span>
   )
