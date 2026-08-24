@@ -11,7 +11,7 @@ import bgPattern from "@/assets/background.svg";
 import { MOTIFS } from "@/lib/ai";
 import logo from "@/assets/logo.svg";
 
-type Page = "landing" | "customer" | "pembatik" | "owner" | "auth";
+type Page = "landing" | "customer" | "pengrajin" | "owner" | "auth";
 
 interface LandingProps {
   go: (page: Page) => void;
@@ -81,10 +81,10 @@ export const Landing: FC<LandingProps> = ({ go }) => {
                 <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-sky/30 text-navy">
                   <UserIcon className="h-5 w-5" />
                 </div>
-                <p className="font-display text-xl text-navy">Pembatik</p>
+                <p className="font-display text-xl text-navy">Pengrajin</p>
               </div>
               <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-navy group-hover:text-navy">
-                Masuk sebagai Pembatik{" "}
+                Masuk sebagai Pengrajin{" "}
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </button>

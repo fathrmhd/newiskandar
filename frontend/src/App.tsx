@@ -13,12 +13,12 @@ import { INITIAL_AUDIT_LOGS, type AuditLog } from "@/lib/ai";
 /*  SPA dengan 3 Peran: Pembeli · Staf Pembatik · Pemilik Sanggar.     */
 /* ------------------------------------------------------------------ */
 
-export type Page = "landing" | "customer" | "pembatik" | "owner" | "auth";
+export type Page = "landing" | "customer" | "pengrajin" | "owner" | "auth";
 
 const NAV_ITEMS: { id: Page; label: string; roleReq?: UserRole }[] = [
   { id: "landing", label: "Beranda" },
   { id: "customer", label: "Pembeli" },
-  { id: "pembatik", label: "Pembatik" },
+  { id: "pembatik", label: "Pengrajin" },
   { id: "owner", label: "Pemilik" },
 ];
 
@@ -160,7 +160,7 @@ function Header({
                 {session.role === "owner"
                   ? "Owner"
                   : session.role === "worker"
-                    ? "Pembatik"
+                    ? "Pengrajin"
                     : "Pembeli"}
               </span>
             </button>

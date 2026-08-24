@@ -287,7 +287,7 @@ function Screen2({
   ai: ReturnType<typeof computeAI>;
   onBack: () => void;
 }) {
-  // Tahap aktif yang sedang dikerjakan pembatik (Tahap 3: Celup Indigo)
+  // Tahap aktif yang sedang dikerjakan pengrajin (Tahap 3: Celup Indigo)
   const currentStage = DIGITAL_TWIN_STAGES[0] ?? DIGITAL_TWIN_STAGES[0];
 
   const minDays = Math.max(1, Math.ceil(ai.totalDays));

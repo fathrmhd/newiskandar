@@ -85,7 +85,7 @@ export const Auth: FC<AuthProps> = ({ onLogin, onCancel }) => {
           Masuk ke New Iskandar
         </h1>
         <p className="mx-auto mt-3 max-w-lg text-[15px] text-deep/75">
-          Akses disesuaikan berdasarkan hak akses peran: Pembeli, Staf Pembatik, atau Pemilik Sanggar.
+          Akses disesuaikan berdasarkan hak akses peran: Pembeli, Staf pengrajin, atau Pemilik Sanggar.
         </p>
         <Canting className="mx-auto mt-5 h-2 w-48 text-ocean/70" />
       </div>
@@ -118,7 +118,7 @@ export const Auth: FC<AuthProps> = ({ onLogin, onCancel }) => {
           </p>
         </button>
 
-        {/* Peran 2: Pembatik */}
+        {/* Peran 2: pengrajin */}
         <button
           type="button"
           onClick={() => setSelectedRole('worker')}
@@ -138,9 +138,9 @@ export const Auth: FC<AuthProps> = ({ onLogin, onCancel }) => {
               </span>
             )}
           </div>
-          <h3 className="mt-4 font-display text-xl text-navy">Staf Pembatik</h3>
+          <h3 className="mt-4 font-display text-xl text-navy">Staf pengrajin</h3>
           <p className="mt-1 text-xs text-deep/70">
-            Antarmuka kerja harian stasiun pembatik, checklist SOP pengerjaan, dan sistem peringatan ketiadaan.
+            Antarmuka kerja harian stasiun pengrajin, checklist SOP pengerjaan, dan sistem peringatan ketiadaan.
           </p>
         </button>
 
@@ -184,7 +184,7 @@ export const Auth: FC<AuthProps> = ({ onLogin, onCancel }) => {
                 {selectedRole === 'customer'
                   ? 'Akun Pembeli'
                   : selectedRole === 'worker'
-                    ? 'Akun Staf Pembatik'
+                    ? 'Akun Staf pengrajin'
                     : 'Akun Pemilik Sanggar'}
               </h2>
             </div>
@@ -214,7 +214,7 @@ export const Auth: FC<AuthProps> = ({ onLogin, onCancel }) => {
             {selectedRole === 'worker' && (
               <div>
                 <label className="block text-xs font-semibold text-deep/70 mb-1">
-                  Pilih Profil Pembatik
+                  Pilih Profil pengrajin
                 </label>
                 <select
                   value={selectedWorkerId}
@@ -297,7 +297,7 @@ export const Auth: FC<AuthProps> = ({ onLogin, onCancel }) => {
               className="flex w-full items-center justify-between rounded-2xl border border-white/15 bg-white/10 p-4 text-left backdrop-blur transition-all hover:bg-white/20"
             >
               <div>
-                <p className="font-semibold text-soft text-sm">Masuk sebagai Staf Pembatik</p>
+                <p className="font-semibold text-soft text-sm">Masuk sebagai Staf pengrajin</p>
                 <p className="text-[11px] text-sky/70">Akses dashboard meja kerja & peringatan</p>
               </div>
               <ArrowRight className="h-4 w-4 text-sky" />
