@@ -8,10 +8,6 @@ import DashboardOwner from "@/pages/DashboardOwner";
 import Auth, { type AuthSession, type UserRole } from "@/pages/Auth";
 import { INITIAL_AUDIT_LOGS, type AuditLog } from "@/lib/ai";
 
-/* ------------------------------------------------------------------ */
-/*  New Iskandar — AI Handicraft Commerce (Batik Tulis Aceh)           */
-/*  SPA dengan 3 Peran: Pembeli · Staf Pembatik · Pemilik Sanggar.     */
-/* ------------------------------------------------------------------ */
 
 export type Page = "landing" | "customer" | "pengrajin" | "owner" | "auth";
 
@@ -102,7 +98,7 @@ function Header({
   return (
     <header className="sticky top-0 z-30 border-b border-white/10 bg-navy/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1180px] items-center justify-between px-5 py-3 sm:px-8">
-        {/* Brand Logo */}
+        {}
         <button
           onClick={() => go("landing")}
           className="flex h-12 w-48 items-center overflow-hidden text-left focus:outline-none"
@@ -114,7 +110,7 @@ function Header({
           />
         </button>
 
-        {/* Navigasi Utama */}
+        {}
         <nav className="flex items-center gap-5 text-sm text-sky/85 sm:gap-7">
           {NAV_ITEMS.map((n) => {
             const active = n.id === page;
@@ -141,7 +137,7 @@ function Header({
           })}
         </nav>
 
-        {/* Status Peran Pengguna / Tombol Masuk */}
+        {}
         <div className="hidden lg:flex items-center gap-3">
           {session ? (
             <button

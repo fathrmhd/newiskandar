@@ -95,7 +95,6 @@ export default function Customer() {
   );
 }
 
-/* ---------------- Layar 1 — pilih motif & atur intensitas -------------- */
 
 function Screen1({
   motif,
@@ -274,7 +273,6 @@ function Screen1({
   );
 }
 
-/* ---------------- Layar 2 — status pesanan diproses -------------------- */
 
 function Screen2({
   chosen,
@@ -308,7 +306,8 @@ function Screen2({
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
-        {/* Kolom Kiri: Satu Proses Tunggal Digital Twin + List Tracking Tahapan */}
+        {
+        }
         <div className="space-y-6">
           <div className="rounded-3xl border border-sky/60 bg-white p-6 sm:p-8 shadow-sm">
             <div className="mb-6 flex">
@@ -322,7 +321,8 @@ function Screen2({
             </div>
 
             <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[1fr_1.2fr]">
-              {/* Visual Crop Digital Twin */}
+              {
+              }
               <div className="relative aspect-square w-full max-w-[320px] mx-auto overflow-hidden rounded-3xl border-2 border-sky/70 bg-white p-3 shadow-sm flex items-center justify-center">
                 {currentStage.isFinal ? (
                   <div className="relative h-full w-full overflow-hidden rounded-2xl flex items-center justify-center">
@@ -353,14 +353,16 @@ function Screen2({
                   </div>
                 )}
 
-                {/* Retikel Sudut */}
+                {
+                }
                 <div className="pointer-events-none absolute left-3 top-3 h-3 w-3 border-l-2 border-t-2 border-ocean/40" />
                 <div className="pointer-events-none absolute right-3 top-3 h-3 w-3 border-r-2 border-t-2 border-ocean/40" />
                 <div className="pointer-events-none absolute bottom-3 left-3 h-3 w-3 border-b-2 border-l-2 border-ocean/40" />
                 <div className="pointer-events-none absolute bottom-3 right-3 h-3 w-3 border-b-2 border-r-2 border-ocean/40" />
               </div>
 
-              {/* Rincian Deskripsi Proses */}
+              {
+              }
               <div className="space-y-4">
                 <div>
                   <span className="font-mono text-xs font-bold uppercase tracking-wider text-ocean">
@@ -381,7 +383,8 @@ function Screen2({
             </div>
           </div>
 
-          {/* Card Tracking Tahapan Produksi */}
+          {
+          }
           <div className="rounded-3xl border border-sky/60 bg-white p-6 sm:p-8 shadow-sm">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
@@ -392,7 +395,8 @@ function Screen2({
               <span className="font-display text-5xl text-ocean">{Math.round(progress * 100)}%</span>
             </div>
 
-            {/* Progress bar */}
+            {
+            }
             <div className="mt-5 h-3 w-full overflow-hidden rounded-full bg-sky/40">
               <div
                 className="h-full rounded-full transition-[width] duration-700"
@@ -400,7 +404,8 @@ function Screen2({
               />
             </div>
 
-            {/* List Tahapan */}
+            {
+            }
             <ol className="mt-7 space-y-3">
               {BATIK_STAGES.map((s, i) => {
                 const done = i < activeIndex;
@@ -435,7 +440,8 @@ function Screen2({
           </div>
         </div>
 
-        {/* Kolom Kanan: Durasi & Ringkasan SLA */}
+        {
+        }
         <aside
           className="flex flex-col gap-4 self-start rounded-3xl border border-ocean/30 p-6 text-soft shadow-sm w-full"
           style={{ backgroundImage: BRAND_GRADIENT }}
@@ -460,8 +466,6 @@ function Screen2({
     </div>
   );
 }
-
-/* ---------------- Fungsi Helper -------------------- */
 
 function Row({
   label,

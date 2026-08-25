@@ -25,13 +25,11 @@ let uid = 100
 const nextId = () => `x${uid++}`
 
 const Seller: FC = () => {
-  // Role & Tab State
   const [role, setRole] = useState<Role>('owner')
   const [ownerTab, setOwnerTab] = useState<OwnerTab>('surveillance')
   const [selectedStationId, setSelectedStationId] = useState<string>('st-1')
   const [selectedWorkerId, setSelectedWorkerId] = useState<string>('w1')
 
-  // Data State
   const [workstations, setWorkstations] = useState<Workstation[]>(WORKSTATIONS)
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(INITIAL_AUDIT_LOGS)
   const [logFilter, setLogFilter] = useState<'all' | 'warning' | 'resolved'>('all')
@@ -39,17 +37,14 @@ const Seller: FC = () => {
   const [materials, setMaterials] = useState<Material[]>(DEFAULT_MATERIALS)
   const [target, setTarget] = useState(40)
 
-  // Worker Inactivity State
   const [workerSimulatedIdle, setWorkerSimulatedIdle] = useState(false)
   const [workerIdleSeconds, setWorkerIdleSeconds] = useState(0)
   const [isWarningModalOpen, setIsWarningModalOpen] = useState(false)
 
-  // AI Calculations for Production Capacity
   const dailyCapacity = workers.reduce((s, w) => s + (w.rate || 0), 0)
   const ai = useMemo(() => computeAI(target, dailyCapacity), [target, dailyCapacity])
   const alloc = useMemo(() => allocate(workers, ai.poQty), [workers, ai.poQty])
 
-  // Timer simulasi ketidakhadiran pekerja
   useEffect(() => {
     let interval: NodeJS.Timeout
     if (workerSimulatedIdle) {
@@ -68,19 +63,16 @@ const Seller: FC = () => {
     return () => clearInterval(interval)
   }, [workerSimulatedIdle, isWarningModalOpen])
 
-  // Dapatkan stasiun aktif saat ini
   const activeStation =
     workstations.find((s) => s.id === selectedStationId) || workstations[0]
   const currentWorker =
     workers.find((w) => w.id === selectedWorkerId) || workers[0]
 
-  // Handler untuk trigger warning ketiadaan
   const handleTriggerWarning = () => {
     setWorkerSimulatedIdle(true)
     setWorkerIdleSeconds(185)
     setIsWarningModalOpen(true)
 
-    // Tambahkan ke log audit secara real-time
     const newLog: AuditLog = {
       id: `log-${Date.now()}`,
       timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
@@ -96,20 +88,17 @@ const Seller: FC = () => {
     setAuditLogs((prev) => [newLog, ...prev])
   }
 
-  // Handler konfirmasi pekerja kembali
   const handleWorkerReturn = () => {
     setWorkerSimulatedIdle(false)
     setWorkerIdleSeconds(0)
     setIsWarningModalOpen(false)
 
-    // Perbarui stasiun kerja menjadi aktif
     setWorkstations((prev) =>
       prev.map((s) =>
         s.id === selectedStationId ? { ...s, status: 'active', idleSeconds: 0 } : s
       )
     )
 
-    // Catat log kembali bekerja
     const resolvedLog: AuditLog = {
       id: `log-${Date.now()}`,
       timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
@@ -125,7 +114,6 @@ const Seller: FC = () => {
     setAuditLogs((prev) => [resolvedLog, ...prev])
   }
 
-  // Handler izin istirahat / ambil bahan
   const handleRequestBreak = (mins: number) => {
     setIsWarningModalOpen(false)
     setWorkerSimulatedIdle(false)
@@ -148,7 +136,8 @@ const Seller: FC = () => {
 
   return (
     <main className="mx-auto max-w-[1180px] px-5 pb-28 pt-8 sm:px-8">
-      {/* Role Switcher Bar - Desain Elegan & Jelas */}
+      {
+      }
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-sky/70 bg-white p-4 sm:p-5 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-navy text-xl text-soft shadow-inner">
@@ -171,7 +160,8 @@ const Seller: FC = () => {
           </div>
         </div>
 
-        {/* Toggle Switcher Role */}
+        {
+        }
         <div className="flex rounded-2xl border border-sky/80 bg-soft p-1.5 shadow-inner">
           <button
             onClick={() => {
@@ -202,7 +192,8 @@ const Seller: FC = () => {
         </div>
       </div>
 
-      {/* Warning Modal untuk Pekerja jika Inactivity Terdeteksi */}
+      {
+      }
       <InactivityAlertModal
         isOpen={isWarningModalOpen && role === 'worker'}
         workerName={currentWorker.name}
@@ -212,12 +203,16 @@ const Seller: FC = () => {
         onRequestBreak={handleRequestBreak}
       />
 
-      {/* ========================================================================= */}
-      {/* TAMPILAN ROLE OWNER (PEMILIK SANGGAR)                                     */}
-      {/* ========================================================================= */}
+      {
+      }
+      {
+      }
+      {
+      }
       {role === 'owner' && (
         <div className="mt-8 space-y-8 animate-in fade-in duration-300">
-          {/* Header & Sub-Navigasi Owner */}
+          {
+          }
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-sky/40 pb-5">
             <div>
               <div className="flex items-center gap-2">
@@ -234,7 +229,8 @@ const Seller: FC = () => {
               </p>
             </div>
 
-            {/* Sub-tabs Owner */}
+            {
+            }
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setOwnerTab('surveillance')}
@@ -269,7 +265,8 @@ const Seller: FC = () => {
             </div>
           </div>
 
-          {/* Metric Cards Ringkasan Kinerja */}
+          {
+          }
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-2xl border border-sky/60 bg-white p-5 shadow-sm">
               <Tag>Tingkat Kepatuhan</Tag>
@@ -314,7 +311,8 @@ const Seller: FC = () => {
             </div>
           </div>
 
-          {/* TAB 1: PENGAWASAN KAMERA AI (GRID & EXPANDED STREAM) */}
+          {
+          }
           {ownerTab === 'surveillance' && (
             <div className="space-y-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -325,7 +323,8 @@ const Seller: FC = () => {
                 />
               </div>
 
-              {/* Grid 4 Kamera Stasiun Kerja */}
+              {
+              }
               <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                 {workstations.map((st) => {
                   const isSelected = st.id === selectedStationId
@@ -363,10 +362,12 @@ const Seller: FC = () => {
                         </span>
                       </div>
 
-                      {/* Preview Stream Mini */}
+                      {
+                      }
                       <VisionStream station={st} compact showControls={false} />
 
-                      {/* Detail Status Stasiun */}
+                      {
+                      }
                       <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-deep/75 font-mono border-t border-sky/30 pt-2.5">
                         <div>
                           <span className="text-deep/50 block">Pembatik:</span>
@@ -390,7 +391,8 @@ const Seller: FC = () => {
                 })}
               </div>
 
-              {/* Tampilan Terfokus Stasiun yang Dipilih */}
+              {
+              }
               <div className="mt-8 rounded-3xl border border-sky/70 bg-white p-6 sm:p-8 shadow-sm">
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                   <div>
@@ -415,7 +417,9 @@ const Seller: FC = () => {
             </div>
           )}
 
-          {/* TAB 2: LAPORAN & AUDIT LOG EVALUASI */}
+          {
+          }
+
           {ownerTab === 'logs' && (
             <div className="space-y-6">
               <StageMark
@@ -424,7 +428,7 @@ const Seller: FC = () => {
                 sub="Catatan otomatis deteksi ketidakhadiran di meja kerja untuk evaluasi kinerja harian dan perhitungan upah adil."
               />
 
-              {/* Filter Log Bar */}
+              {}
               <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-sky/60 bg-white p-4">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-xs font-semibold text-deep/70">Filter Status:</span>
@@ -468,7 +472,7 @@ const Seller: FC = () => {
                 </button>
               </div>
 
-              {/* Tabel Log */}
+              {}
               <div className="overflow-hidden rounded-3xl border border-sky/60 bg-white shadow-sm">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm text-deep">
@@ -562,7 +566,7 @@ const Seller: FC = () => {
             </div>
           )}
 
-          {/* TAB 3: DIGITAL TWIN, KAPASITAS SANGGAR & HPP */}
+          {}
           {ownerTab === 'capacity' && (
             <div className="space-y-8">
               <StageMark
@@ -571,11 +575,11 @@ const Seller: FC = () => {
                 sub="Mesin AI menghitung kesanggupan pengerjaan pesanan, kebutuhan bahan baku, serta batas harga sehat."
               />
 
-              {/* Form Input & Output AI */}
+              {}
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.15fr_1fr]">
-                {/* Kolom input mentah */}
+                {}
                 <div className="flex flex-col gap-10">
-                  {/* Pekerja */}
+                  {}
                   <section>
                     <StageMark
                       numeral="satu"
@@ -700,9 +704,9 @@ const Seller: FC = () => {
                   </section>
                 </div>
 
-                {/* Kolom hasil AI */}
+                {}
                 <div className="flex flex-col gap-5 lg:sticky lg:top-24 lg:self-start">
-                  {/* Uji kesanggupan */}
+                  {}
                   <div className="rounded-3xl border border-sky/60 bg-white p-6">
                     <Tag>Uji kesanggupan</Tag>
                     <p className="mt-2 text-[15px] text-deep/70">Ada pesanan masuk sekian lembar — sanggup?</p>
@@ -732,7 +736,7 @@ const Seller: FC = () => {
                     </div>
                   </div>
 
-                  {/* Kesanggupan & SLA */}
+                  {}
                   <div
                     className="rounded-3xl border border-ocean/30 p-6 text-soft"
                     style={{ backgroundImage: 'linear-gradient(180deg,#0a1931,#1a3d63 65%,#2f5b83)' }}
@@ -747,7 +751,7 @@ const Seller: FC = () => {
                     </div>
                   </div>
 
-                  {/* Pembagian kerja — Digital Twin */}
+                  {}
                   <div className="rounded-3xl border border-sky/60 bg-white p-6">
                     <Tag>Pembagian ke pembatik</Tag>
                     <p className="mt-1 text-[15px] text-deep/70">
@@ -771,7 +775,7 @@ const Seller: FC = () => {
                     </div>
                   </div>
 
-                  {/* HPP */}
+                  {}
                   <div className="rounded-3xl border border-sky/60 bg-white p-6">
                     <Tag>Modal & harga sehat</Tag>
                     <div className="mt-3 flex items-baseline justify-between">
@@ -797,12 +801,13 @@ const Seller: FC = () => {
         </div>
       )}
 
-      {/* ========================================================================= */}
-      {/* TAMPILAN ROLE PEKERJA (STAF PEMBATIK)                                      */}
-      {/* ========================================================================= */}
+      {}
+      {}
+      {}
+
       {role === 'worker' && (
         <div className="mt-8 space-y-8 animate-in fade-in duration-300">
-          {/* Floating Banner jika Inactivity Melebihi Toleransi */}
+          {}
           {workerSimulatedIdle && (
             <InactivityBanner
               idleSeconds={workerIdleSeconds}
@@ -810,7 +815,7 @@ const Seller: FC = () => {
             />
           )}
 
-          {/* Header Dashboard Pekerja & Pemilihan Staf */}
+          {}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-sky/40 pb-5">
             <div>
               <div className="flex items-center gap-2">
@@ -827,7 +832,7 @@ const Seller: FC = () => {
               </p>
             </div>
 
-            {/* Pilihan Staf Pembatik untuk kemudahan simulasi/testing */}
+            {}
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold text-deep/60">Ganti Profil Staf:</span>
               <select
@@ -850,7 +855,7 @@ const Seller: FC = () => {
             </div>
           </div>
 
-          {/* Panel Kontrol Simulasi Cepat (Pengujian Fitur Revisi) */}
+          {}
           <div className="rounded-3xl border-2 border-dashed border-ocean/40 bg-ocean/5 p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -905,9 +910,9 @@ const Seller: FC = () => {
             </div>
           </div>
 
-          {/* Grid Konten Stasiun Kerja Pekerja */}
+          {}
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.3fr_1fr]">
-            {/* Stream Kamera AI Stasiun Kerja Pekerja */}
+            {}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-display text-2xl text-navy">Feed Sensor Kamera Stasiun</h3>
@@ -940,9 +945,9 @@ const Seller: FC = () => {
               </div>
             </div>
 
-            {/* Kolom Status Pengerjaan & Checklist Harian */}
+            {}
             <div className="flex flex-col gap-5">
-              {/* Target Hari Ini */}
+              {}
               <div className="rounded-3xl border border-sky/60 bg-white p-6 shadow-sm">
                 <Tag>Target Harian Anda</Tag>
                 <div className="mt-3 flex items-baseline justify-between">
@@ -973,7 +978,7 @@ const Seller: FC = () => {
                 </div>
               </div>
 
-              {/* Checklist Standar Operasional (SOP Canting) */}
+              {}
               <div className="rounded-3xl border border-sky/60 bg-white p-6 shadow-sm">
                 <Tag>SOP Mutu Sanggar</Tag>
                 <h4 className="mt-2 font-display text-xl text-navy">Panduan Pengerjaan</h4>
@@ -999,7 +1004,7 @@ const Seller: FC = () => {
                 </ul>
               </div>
 
-              {/* Status Kehadiran Personal */}
+              {}
               <div
                 className="rounded-3xl border border-ocean/30 p-6 text-soft shadow-sm"
                 style={{ backgroundImage: 'linear-gradient(180deg,#0a1931,#1a3d63 65%,#2f5b83)' }}
@@ -1027,7 +1032,6 @@ const Seller: FC = () => {
   )
 }
 
-/* --------------------------- helpers --------------------------- */
 
 const inputCls =
   'w-full rounded-lg border border-sky/70 bg-soft px-3 py-2 text-sm text-navy outline-none transition-colors focus:border-ocean'

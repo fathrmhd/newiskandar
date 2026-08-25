@@ -16,25 +16,23 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
   currentWorkerId = 'w1',
   onLogout,
 }) => {
-  // Ambil data pekerja langsung dari props (sudah spesifik per akun)
   const worker: Worker = DEFAULT_WORKERS.find((w) => w.id === currentWorkerId) || DEFAULT_WORKERS[0]
   const currentStation = worker.currentLocation || 'Nyanting'
   
-  // State untuk pencatatan waktu 1 produk (satuan menit)
   const [productionTime, setProductionTime] = useState({
     activeMinutes: 95,
-    breakMinutes: 15, // Waktu idle/hak istirahat
+    breakMinutes: 15,
   })
 
-  // Kalkulasi Waktu
-  const idealDuration = 120 // Durasi ideal pengerjaan 1 produk (menit)
+  const idealDuration = 120
   const totalDuration = productionTime.activeMinutes + productionTime.breakMinutes
-  const isTargetMet = totalDuration <= idealDuration + 10 // Toleransi 10 menit
+  const isTargetMet = totalDuration <= idealDuration + 10
 
   return (
     <main className="mx-auto max-w-[1180px] px-5 pb-24 pt-8 sm:px-8">
       
-      {/* Bar Header Stasiun Pembatik */}
+      {
+      }
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-sky/70 bg-white p-5 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-ocean text-soft">
@@ -59,7 +57,8 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
           </div>
         </div>
 
-        {/* Profil Pembatik Logout - Dropdown Dihapus */}
+        {
+        }
         <div className="flex flex-wrap items-center gap-2">
           {onLogout && (
             <button
@@ -72,10 +71,12 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
         </div>
       </div>
 
-      {/* Grid Utama Stasiun Kerja */}
+      {
+      }
       <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr]">
         
-        {/* Kolom 1: Pencatatan Waktu Per Produk & Evaluasi */}
+        {
+        }
         <div className="space-y-6">
           <StageMark  
             title="Durasi Kerja"
@@ -110,7 +111,8 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
             </div>
           </div>
 
-          {/* Sistem Reward */}
+          {
+          }
           <div className={`rounded-3xl border p-6 shadow-sm flex items-start gap-4 transition-colors ${isTargetMet ? 'bg-[color:var(--color-ok)]/10 border-[color:var(--color-ok)]/30' : 'bg-white border-sky/60'}`}>
             <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${isTargetMet ? 'bg-[color:var(--color-ok)] text-white' : 'bg-sky/20 text-deep'}`}>
               <CheckIcon className="h-6 w-6" />
@@ -131,10 +133,12 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
           </div>
         </div>
 
-        {/* Kolom 2: SOP / QC & Status Kehadiran */}
+        {
+        }
         <div className="flex flex-col gap-6">
           
-          {/* Dinamis: SOP atau Quality Control berupa Bullet Points */}
+          {
+          }
           <div className="rounded-3xl border border-sky/60 bg-white p-6 shadow-sm">
             <Tag>{currentStation === 'Kain Jadi (QC)' ? 'Quality Assurance (QC)' : 'SOP Mutu Sanggar'}</Tag>
             <h4 className="mt-2 font-display text-xl text-navy">
@@ -158,7 +162,8 @@ export const DashboardPembatik: FC<DashboardPembatikProps> = ({
             </ul>
           </div>
 
-          {/* Status Kepatuhan & Manajemen SDM */}
+          {
+          }
       
 
         </div>

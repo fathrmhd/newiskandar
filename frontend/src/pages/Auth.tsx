@@ -118,7 +118,8 @@ export const Auth: FC<AuthProps> = ({ onLogin, onCancel }) => {
           </p>
         </button>
 
-        {/* Peran 2: pengrajin */}
+        {
+        }
         <button
           type="button"
           onClick={() => setSelectedRole('worker')}
@@ -144,7 +145,8 @@ export const Auth: FC<AuthProps> = ({ onLogin, onCancel }) => {
           </p>
         </button>
 
-        {/* Peran 3: Pemilik */}
+        {
+        }
         <button
           type="button"
           onClick={() => setSelectedRole('owner')}
@@ -170,10 +172,8 @@ export const Auth: FC<AuthProps> = ({ onLogin, onCancel }) => {
           </p>
         </button>
       </div>
-
-      {/* Formulir Masuk & Akses Cepat Demo */}
-      <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_1fr]">
-        {/* Formulir Kredensial */}
+      {
+      }
         <div className="rounded-3xl border border-sky/60 bg-white p-6 sm:p-8 shadow-sm">
           <div className="flex items-center justify-between border-b border-sky/30 pb-4">
             <div>

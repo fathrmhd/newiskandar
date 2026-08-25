@@ -30,7 +30,6 @@ let uid = 100;
 const nextId = () => `x${uid++}`;
 
 export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
-  // State untuk jam pura-pura di CCTV
   const [currentTime, setCurrentTime] = useState("");
 
   useEffect(() => {
@@ -70,7 +69,8 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
 
   return (
     <main className="mx-auto max-w-[1180px] px-5 pb-28 pt-8 sm:px-8">
-      {/* Header Pusat Kendali */}
+      {
+      }
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-3xl border border-sky/70 bg-white p-5 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-navy text-soft">
@@ -135,7 +135,8 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
         </div>
       </div>
 
-      {/* Metric Cards (Sama seperti sebelumnya) */}
+      {
+      }
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-3xl border border-sky/60 bg-white p-5 shadow-sm">
           <Tag>Kapasitas Harian Sanggar</Tag>
@@ -185,7 +186,8 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
                 </span>
               </div>
 
-              {/* ===== BAGIAN YANG DIUBAH MENJADI GAMBAR STATIS ===== */}
+              {
+              }
               <div className="relative mx-auto aspect-video max-w-4xl overflow-hidden rounded-2xl border border-sky/40 bg-navy shadow-inner group">
                 <img
                   src={liveCamImg}
@@ -193,7 +195,8 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
                   className="h-full w-full object-cover opacity-90 transition-opacity group-hover:opacity-100"
                 />
 
-                {/* Overlay CCTV Palsu biar lebih realistis */}
+                {
+                }
                 <div className="absolute right-4 top-4 flex items-center gap-2 rounded bg-black/60 px-3 py-1.5 font-mono text-xs font-medium text-white backdrop-blur-sm">
                   <span className="relative flex h-2.5 w-2.5">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75"></span>
@@ -206,7 +209,8 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
                   CAM 01 - AREA {CENTRAL_CAMERA.name}
                 </div>
               </div>
-              {/* ===================================================== */}
+              {
+              }
 
               <p className="mx-auto mt-6 max-w-2xl rounded-xl border border-sky/30 bg-soft/50 py-3 text-center text-xs text-deep/60">
                 Kamera ini murni digunakan sebagai antarmuka pantauan visual
@@ -216,7 +220,8 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
             </div>
           </section>
 
-          {/* Sisa kode AI Dynamic HPP dan Tab Lainnya tetap utuh ... */}
+          {
+          }
           <section className="border-t border-sky/40 pt-10">
             <StageMark
               title="HPP"
@@ -314,7 +319,8 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
 
       {activeTab === "hr" && (
         <div className="mt-8 space-y-12">
-          {/* Bagian HR tetap sama */}
+          {
+          }
           <section>
             <StageMark
               title="Distribusi Beban Kerja (Target SDM)"
@@ -449,7 +455,8 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
 
       {activeTab === "warehouse" && (
         <div className="mt-8 space-y-8">
-          {/* Bagian Gudang tidak diubah */}
+          {
+          }
           <StageMark
             title="Safety Stock"
             sub="Simulasi kesanggupan produksi dan kebutuhan stok bahan baku."
@@ -653,7 +660,6 @@ export const DashboardOwner: FC<DashboardOwnerProps> = ({ onLogout }) => {
   );
 };
 
-/* --------------------------- Helper Functions --------------------------- */
 const inputCls =
   "w-full rounded-xl border border-sky/70 bg-soft px-3 py-2 text-sm text-navy outline-none transition-colors focus:border-ocean";
 

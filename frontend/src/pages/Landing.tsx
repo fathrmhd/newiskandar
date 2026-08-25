@@ -20,9 +20,11 @@ interface LandingProps {
 export const Landing: FC<LandingProps> = ({ go }) => {
   return (
     <main>
-      {/* Hero Section */}
+      {
+      }
       <section className="relative min-h-[calc(100vh-40px)] overflow-hidden bg-navy px-5 py-16 text-soft sm:px-8 sm:py-24">
-        {/* Background Motif Pattern Overlay */}
+        {
+        }
         <div
           className="pointer-events-none absolute inset-0 bg-cover bg-center opacity-100"
           style={{
@@ -31,10 +33,12 @@ export const Landing: FC<LandingProps> = ({ go }) => {
         />
 
         <div className="relative mx-auto max-w-[1000px]">
-          {/* Eyebrow */}
+          {
+          }
           <div className="flex items-center gap-2 text-sky/80"></div>
 
-          {/* Hero Logo */}
+          {
+          }
           <div className="-ml-10 flex h-23 w-[520px] items-center overflow-hidden">
             <img
               src={logo}
@@ -53,9 +57,11 @@ export const Landing: FC<LandingProps> = ({ go }) => {
             efisiensi penuh bagi pemilik sanggar.
           </p>
 
-          {/* Action Cards untuk Tiga Peran */}
+          {
+          }
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-3">
-            {/* Kartu Pembeli */}
+            {
+            }
             <button
               onClick={() => go("customer")}
               className="group flex flex-col justify-between rounded-3xl bg-soft p-6 text-left shadow-lg transition-all duration-200 hover:bg-white hover:shadow-xl"
@@ -72,7 +78,8 @@ export const Landing: FC<LandingProps> = ({ go }) => {
               </span>
             </button>
 
-            {/* Kartu Pembatik */}
+            {
+            }
             <button
               onClick={() => go("pembatik")}
               className="group flex flex-col justify-between rounded-3xl bg-soft p-6 text-left shadow-lg transition-all duration-200 hover:bg-white hover:shadow-xl"
@@ -89,7 +96,8 @@ export const Landing: FC<LandingProps> = ({ go }) => {
               </span>
             </button>
 
-            {/* Kartu Pemilik Sanggar */}
+            {
+            }
             <button
               onClick={() => go("owner")}
               className="group flex flex-col justify-between rounded-3xl bg-soft p-6 text-left shadow-lg transition-all duration-200 hover:bg-white hover:shadow-xl"
@@ -111,7 +119,8 @@ export const Landing: FC<LandingProps> = ({ go }) => {
         </div>
       </section>
 
-      {/* Ragam Motif (Katalog Preview) */}
+      {
+      }
       <section className="border-t border-sky/50 bg-[#eef4fa]">
         <div className="mx-auto max-w-[1180px] px-5 py-16 sm:px-8 sm:py-20">
           <div className="flex flex-wrap items-end justify-between gap-4">
