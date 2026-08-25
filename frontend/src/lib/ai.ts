@@ -45,11 +45,11 @@ export const BOM = [
 
 // Tahapan proses batik yang sebenarnya.
 export const BATIK_STAGES = [
-  { name: 'Nyanting / Nge-cap', note: 'menggambar motif dengan malam' },
-  { name: 'Pewarnaan / Celup', note: 'pencelupan indigo & napthol' },
-  { name: 'Pelorodan', note: 'meluruhkan malam dengan air panas' },
-  { name: 'Penjemuran', note: 'pengeringan alami di angin-angin' },
-  { name: 'Finishing & QC', note: 'pelipatan, penyetrikaan, mutu' },
+  { name: 'Pemotongan', note: 'memotong kain' },
+  { name: 'Nyanting Motif', note: 'menggambar motif' },
+  { name: 'Pencelupan', note: 'merendam Kain' },
+  { name: 'Pelorodan', note: 'meluruhkan lilin yang menempel pada kain' },
+  { name: 'Pengiriman', note: 'pesanan anda siap dikirim' },
 ]
 
 export const rupiah = (n: number) => 'Rp' + Math.round(n).toLocaleString('id-ID')

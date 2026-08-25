@@ -49,7 +49,7 @@ export const DIGITAL_TWIN_STAGES: StageInfo[] = [
   },
   {
     id: 2,
-    name: "Nyanting Motif Malam",
+    name: "Nyanting Motif",
     cropCoords: { x: 49, y: 0, w: 50, h: 50 },
   },
   {
@@ -59,7 +59,7 @@ export const DIGITAL_TWIN_STAGES: StageInfo[] = [
   },
   {
     id: 4,
-    name: "Pelorodan & QC Mutu",
+    name: "Pelorodan",
     cropCoords: { x: 50, y: 50, w: 50, h: 50 },
   },
   {
@@ -287,8 +287,11 @@ function Screen2({
   ai: ReturnType<typeof computeAI>;
   onBack: () => void;
 }) {
-  // Tahap aktif yang sedang dikerjakan pengrajin (Tahap 3: Celup Indigo)
-  const currentStage = DIGITAL_TWIN_STAGES[0] ?? DIGITAL_TWIN_STAGES[0];
+  const currentStage = DIGITAL_TWIN_STAGES[1] ?? DIGITAL_TWIN_STAGES[0];
+
+  const progress = 0.52;
+  const activeIndex = 1;
+  const activeBatikStage = BATIK_STAGES[activeIndex];
 
   const minDays = Math.max(1, Math.ceil(ai.totalDays));
   const maxDays = minDays + 3;
@@ -305,75 +308,130 @@ function Screen2({
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
-        {/* Kolom Kiri: Satu Proses Tunggal Digital Twin */}
-        <div className="rounded-3xl border border-sky/60 bg-white p-6 sm:p-8 shadow-sm">
-          <div className="mb-6 flex">
-            <span className="flex items-center gap-2 rounded-full bg-[color:var(--color-ok)]/15 px-4 py-1.5 font-mono text-xs font-semibold text-[color:var(--color-ok)]">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--color-ok)] opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--color-ok)]" />
+        {/* Kolom Kiri: Satu Proses Tunggal Digital Twin + List Tracking Tahapan */}
+        <div className="space-y-6">
+          <div className="rounded-3xl border border-sky/60 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="mb-6 flex">
+              <span className="flex items-center gap-2 rounded-full bg-[color:var(--color-ok)]/15 px-4 py-1.5 font-mono text-xs font-semibold text-[color:var(--color-ok)]">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[color:var(--color-ok)] opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-[color:var(--color-ok)]" />
+                </span>
+                Sedang Diproses
               </span>
-              Sedang Diproses
-            </span>
-          </div>
+            </div>
 
-          <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[1fr_1.2fr]">
-            {/* Visual Crop Digital Twin */}
-            <div className="relative aspect-square w-full max-w-[320px] mx-auto overflow-hidden rounded-3xl border-2 border-sky/70 bg-white p-3 shadow-sm flex items-center justify-center">
-              {currentStage.isFinal ? (
-                <div className="relative h-full w-full overflow-hidden rounded-2xl flex items-center justify-center">
-                  <img
-                    src={dt3}
-                    alt={currentStage.name}
-                    className="h-full w-full object-contain"
-                  />
-                  <div className="absolute bottom-2 left-2 rounded-xl bg-navy/80 px-2.5 py-1 text-[11px] font-mono text-soft backdrop-blur">
-                    Batik Tulis Selesai
-                  </div>
-                </div>
-              ) : (
-                <div className="relative h-full w-full overflow-hidden rounded-2xl bg-white flex items-center justify-center">
-                  <div
-                    className="absolute h-[200%] w-[200%] transition-all duration-500 ease-out"
-                    style={{
-                      left: `${-currentStage.cropCoords.x * 2}%`,
-                      top: `${-currentStage.cropCoords.y * 2}%`,
-                    }}
-                  >
+            <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[1fr_1.2fr]">
+              {/* Visual Crop Digital Twin */}
+              <div className="relative aspect-square w-full max-w-[320px] mx-auto overflow-hidden rounded-3xl border-2 border-sky/70 bg-white p-3 shadow-sm flex items-center justify-center">
+                {currentStage.isFinal ? (
+                  <div className="relative h-full w-full overflow-hidden rounded-2xl flex items-center justify-center">
                     <img
-                      src={dt4}
+                      src={dt3}
                       alt={currentStage.name}
                       className="h-full w-full object-contain"
                     />
+                    <div className="absolute bottom-2 left-2 rounded-xl bg-navy/80 px-2.5 py-1 text-[11px] font-mono text-soft backdrop-blur">
+                      Batik Tulis Selesai
+                    </div>
                   </div>
-                </div>
-              )}
+                ) : (
+                  <div className="relative h-full w-full overflow-hidden rounded-2xl bg-white flex items-center justify-center">
+                    <div
+                      className="absolute h-[200%] w-[200%] transition-all duration-500 ease-out"
+                      style={{
+                        left: `${-currentStage.cropCoords.x * 2}%`,
+                        top: `${-currentStage.cropCoords.y * 2}%`,
+                      }}
+                    >
+                      <img
+                        src={dt4}
+                        alt={currentStage.name}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                  </div>
+                )}
 
-              {/* Retikel Sudut */}
-              <div className="pointer-events-none absolute left-3 top-3 h-3 w-3 border-l-2 border-t-2 border-ocean/40" />
-              <div className="pointer-events-none absolute right-3 top-3 h-3 w-3 border-r-2 border-t-2 border-ocean/40" />
-              <div className="pointer-events-none absolute bottom-3 left-3 h-3 w-3 border-b-2 border-l-2 border-ocean/40" />
-              <div className="pointer-events-none absolute bottom-3 right-3 h-3 w-3 border-b-2 border-r-2 border-ocean/40" />
-            </div>
-
-            {/* Rincian Deskripsi Proses */}
-            <div className="space-y-4">
-              <div>
-                <span className="font-mono text-xs font-bold uppercase tracking-wider text-ocean">
-                  Tahap 0{currentStage.id}
-                </span>
-                <h3 className="mt-1 font-display text-2xl sm:text-3xl text-navy">
-                  {currentStage.name}
-                </h3>
-                <p className="mt-1 text-xs sm:text-sm font-medium text-ocean">
-                  {currentStage.subtitle}
-                </p>
+                {/* Retikel Sudut */}
+                <div className="pointer-events-none absolute left-3 top-3 h-3 w-3 border-l-2 border-t-2 border-ocean/40" />
+                <div className="pointer-events-none absolute right-3 top-3 h-3 w-3 border-r-2 border-t-2 border-ocean/40" />
+                <div className="pointer-events-none absolute bottom-3 left-3 h-3 w-3 border-b-2 border-l-2 border-ocean/40" />
+                <div className="pointer-events-none absolute bottom-3 right-3 h-3 w-3 border-b-2 border-r-2 border-ocean/40" />
               </div>
 
-              <p className="text-xs sm:text-sm leading-relaxed text-deep/80">
-                {currentStage.description}
-              </p>
+              {/* Rincian Deskripsi Proses */}
+              <div className="space-y-4">
+                <div>
+                  <span className="font-mono text-xs font-bold uppercase tracking-wider text-ocean">
+                    Tahap 0{currentStage.id}
+                  </span>
+                  <h3 className="mt-1 font-display text-2xl sm:text-3xl text-navy">
+                    {currentStage.name}
+                  </h3>
+                  <p className="mt-1 text-xs sm:text-sm font-medium text-ocean">
+                    {currentStage.subtitle}
+                  </p>
+                </div>
+
+                <p className="text-xs sm:text-sm leading-relaxed text-deep/80">
+                  {currentStage.description}
+                </p>
+              </div>
             </div>
+          </div>
+
+          {/* Card Tracking Tahapan Produksi */}
+          <div className="rounded-3xl border border-sky/60 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="text-[15px] text-deep/70">Tahap yang sedang berjalan</p>
+                <p className="font-display text-3xl text-navy">{activeBatikStage.name}</p>
+                <p className="mt-1 text-sm text-deep/60">{activeBatikStage.note}</p>
+              </div>
+              <span className="font-display text-5xl text-ocean">{Math.round(progress * 100)}%</span>
+            </div>
+
+            {/* Progress bar */}
+            <div className="mt-5 h-3 w-full overflow-hidden rounded-full bg-sky/40">
+              <div
+                className="h-full rounded-full transition-[width] duration-700"
+                style={{ width: `${progress * 100}%`, backgroundImage: 'linear-gradient(90deg,#1a3d63,#4a7fa7)' }}
+              />
+            </div>
+
+            {/* List Tahapan */}
+            <ol className="mt-7 space-y-3">
+              {BATIK_STAGES.map((s, i) => {
+                const done = i < activeIndex;
+                const isActive = i === activeIndex;
+                return (
+                  <li key={s.name} className="flex items-center gap-3">
+                    <span
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-mono text-[12px] ${
+                        done
+                          ? 'bg-[color:var(--color-ok)] text-soft'
+                          : isActive
+                            ? 'bg-ocean text-soft'
+                            : 'border border-sky bg-soft text-deep/50'
+                      }`}
+                    >
+                      {done ? '✓' : i + 1}
+                    </span>
+                    <div className="flex-1 border-b border-sky/40 pb-2">
+                      <div className="flex items-baseline justify-between">
+                        <p className={`font-semibold ${isActive ? 'text-navy' : done ? 'text-deep' : 'text-deep/60'}`}>
+                          {s.name}
+                        </p>
+                        {isActive && <span className="text-[13px] font-medium text-ocean">berlangsung</span>}
+                        {done && <span className="text-[13px] text-[color:var(--color-ok)]">selesai</span>}
+                      </div>
+                      <p className="text-sm text-deep/60">{s.note}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
           </div>
         </div>
 

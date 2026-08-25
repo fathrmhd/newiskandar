@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..600,0..100,0..1&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Karla:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Poppins:wght@600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
 @import 'tailwindcss';
 
@@ -13,8 +12,8 @@
   --color-warn: #c0873a;
   --color-danger: #b0533f;
 
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Karla', system-ui, sans-serif;
+  --font-display: 'Poppins', sans-serif;
+  --font-body: 'Libre Baskerville', Georgia, serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
@@ -34,16 +33,20 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
 .font-display {
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 1;
+  font-weight: 700;
   letter-spacing: -0.01em;
 }
 
 .hand-numeral {
   font-family: var(--font-display);
-  font-variation-settings: 'opsz' 40, 'SOFT' 80, 'WONK' 1;
-  font-style: italic;
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 
