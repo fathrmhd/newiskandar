@@ -1,9 +1,3 @@
-/* ------------------------------------------------------------------ */
-/*  New Iskandar — Web Audio API Synthesizer Peringatan               */
-/*  Menghasilkan suara peringatan lembut bertema pengrajin tanpa      */
-/*  ketergantungan file eksternal yang rentan 404.                   */
-/* ------------------------------------------------------------------ */
-
 let audioCtx: AudioContext | null = null
 
 function getAudioContext(): AudioContext | null {
@@ -22,9 +16,6 @@ function getAudioContext(): AudioContext | null {
   return audioCtx
 }
 
-/**
- * Memutar suara peringatan nada ganda (Chime Alert)
- */
 export function playWarningSound(type: 'warning' | 'resolved' | 'click' = 'warning') {
   try {
     const ctx = getAudioContext()
@@ -33,7 +24,6 @@ export function playWarningSound(type: 'warning' | 'resolved' | 'click' = 'warni
     const now = ctx.currentTime
 
     if (type === 'warning') {
-      // Peringatan ketidakhadiran: 3 nada menurun dan berulang lembut
       const notes = [587.33, 440.0, 349.23] // D5, A4, F4
       notes.forEach((freq, i) => {
         const osc = ctx.createOscillator()
@@ -53,8 +43,7 @@ export function playWarningSound(type: 'warning' | 'resolved' | 'click' = 'warni
         osc.stop(now + i * 0.15 + 0.28)
       })
     } else if (type === 'resolved') {
-      // Notifikasi selesai/kembali ke meja: nada naik menenangkan
-      const notes = [349.23, 440.0, 587.33, 698.46] // F4, A4, D5, F5
+      const notes = [349.23, 440.0, 587.33, 698.46]
       notes.forEach((freq, i) => {
         const osc = ctx.createOscillator()
         const gain = ctx.createGain()
@@ -73,7 +62,6 @@ export function playWarningSound(type: 'warning' | 'resolved' | 'click' = 'warni
         osc.stop(now + i * 0.1 + 0.22)
       })
     } else {
-      // Klik interaktif halus
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
 

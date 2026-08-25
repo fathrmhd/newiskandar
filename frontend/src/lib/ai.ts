@@ -1,15 +1,9 @@
-/* ------------------------------------------------------------------ */
-/*  New Iskandar — mesin AI (mock inference) untuk batik tulis Aceh.    */
-/*  Dipakai lintas halaman: Customer (harga/SLA/status) & Seller (HPP). */
-/* ------------------------------------------------------------------ */
-
 export const TODAY = new Date('2026-08-16T08:00:00')
-export const READY_STOCK = 9 // lembar batik siap etalase
+export const READY_STOCK = 9
 import burungHongImg from '@/assets/burunghong.jpeg'
 import bungaMekarImg from '@/assets/bungamekar.jpeg'
 import sekarJagadImg from '@/assets/sekarjagad.jpeg'
 
-// Katalog motif — Smart Commerce.
 export const MOTIFS = [
   {
     id: 'burung',
@@ -28,14 +22,12 @@ export const MOTIFS = [
   },
 ]
 
-// AI Dynamic HPP & Tiered BOM Optimizer — ambang diskon kuantitas supplier.
 export const TIERS = [
   { min: 1, max: 10, price: 345000, material: 128000, label: 'Eceran' },
   { min: 11, max: 50, price: 305000, material: 112000, label: 'Grosir' },
   { min: 51, max: Infinity, price: 265000, material: 96000, label: 'Ekspor' },
 ]
 
-// Bill of Material per 1 lembar Batik Tulis (2,4 m).
 export const BOM = [
   { name: 'Kain mori primisima', per: 2.4, unit: 'm', price: 26000 },
   { name: 'Malam / lilin batik (klowong + tembokan)', per: 0.18, unit: 'kg', price: 48000 },
@@ -43,7 +35,6 @@ export const BOM = [
   { name: 'Soda abu & TRO (bahan bantu celup)', per: 0.12, unit: 'kg', price: 16000 },
 ]
 
-// Tahapan proses batik yang sebenarnya.
 export const BATIK_STAGES = [
   { name: 'Pemotongan', note: 'memotong kain' },
   { name: 'Nyanting Motif', note: 'menggambar motif' },
@@ -63,7 +54,6 @@ export const addDays = (d: Date, days: number) => {
   return r
 }
 
-/* --- Digital Twin sanggar: dikelola sebagai data mentah oleh Seller --- */
 export type Worker = {
   id: string
   name: string
@@ -136,7 +126,6 @@ export const DEFAULT_MATERIALS: Material[] = [
   { id: 'm3', name: 'Pewarna indigo alami', need: 40, unit: 'takar', minDiscount: 50 },
 ]
 
-/* --- Model 1 Kamera Sentral Sanggar (Single Camera AI Surveillance) --- */
 export interface Workstation {
   id: string
   name: string
@@ -171,7 +160,6 @@ export const CENTRAL_CAMERA: Workstation = {
   status: 'active',
 }
 
-// Data kompatibilitas untuk workstation individual bila diperlukan
 export const WORKSTATIONS: Workstation[] = [
   CENTRAL_CAMERA,
   {
@@ -240,7 +228,6 @@ export const WORKSTATIONS: Workstation[] = [
   },
 ]
 
-/* --- Laporan Kronologis Aktivitas & Pergerakan Pengrajin (Chronicle Feed) --- */
 export interface AuditLog {
   id: string
   timestamp: string
@@ -371,16 +358,15 @@ export function computeAI(
   })
   const materialTotal = bom.reduce((s, b) => s + b.cost, 0)
 
-  // AI Adaptive SLA Predictor.
-  const complexity = 1.2 // batik tulis motif rumit
+
+  const complexity = 1.2 
   const cap = Math.max(0.1, dailyCapacity)
   const productionDays = poQty > 0 ? (poQty / cap) * complexity : 0
   const materialLead = poQty > 0 ? 2 : 0
-  const finishing = qty > 0 ? 3 : 0 // pelorodan + penjemuran + QC
+  const finishing = qty > 0 ? 3 : 0 
   const totalDays = materialLead + productionDays + finishing
   const slaDate = addDays(TODAY, totalDays)
 
-  // AI Dynamic HPP.
   const materialPerUnit = tier.material
   const overhead = 21000
   const labor = 64000
